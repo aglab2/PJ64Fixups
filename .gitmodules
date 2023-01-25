@@ -1,0 +1,6 @@
+[submodule "Thirdparty/minizip-ng"]
+	path = Thirdparty/minizip-ng
+	url = https://github.com/zlib-ng/minizip-ng.git
+[submodule "Thirdparty/zlib-ng"]
+	path = Thirdparty/zlib-ng
+	url = https://github.com/zlib-ng/zlib-ng.git

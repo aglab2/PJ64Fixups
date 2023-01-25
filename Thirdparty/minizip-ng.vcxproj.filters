@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="minizip-ng\mz_crypt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_os.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_strm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_strm_buf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_strm_mem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_strm_split.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_zip.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_zip_rw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_strm_zlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_os_win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="minizip-ng\mz_strm_os_win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="minizip-ng\mz.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_crypt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_os.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_strm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_strm_buf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_strm_mem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_strm_os.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_strm_split.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_zip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_zip_rw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minizip-ng\mz_strm_zstd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib-ng\zlib-ng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

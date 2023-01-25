@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="zlib-ng\adler32.c" />
+    <ClCompile Include="zlib-ng\arch\x86\adler32_avx.c" />
+    <ClCompile Include="zlib-ng\arch\x86\adler32_ssse3.c" />
+    <ClCompile Include="zlib-ng\arch\x86\chunkset_avx.c" />
+    <ClCompile Include="zlib-ng\arch\x86\chunkset_sse.c" />
+    <ClCompile Include="zlib-ng\arch\x86\compare258_avx.c" />
+    <ClCompile Include="zlib-ng\arch\x86\compare258_sse.c" />
+    <ClCompile Include="zlib-ng\arch\x86\crc_folding.c" />
+    <ClCompile Include="zlib-ng\arch\x86\insert_string_sse.c" />
+    <ClCompile Include="zlib-ng\arch\x86\slide_avx.c" />
+    <ClCompile Include="zlib-ng\arch\x86\slide_sse.c" />
+    <ClCompile Include="zlib-ng\arch\x86\x86.c" />
+    <ClCompile Include="zlib-ng\chunkset.c" />
+    <ClCompile Include="zlib-ng\compare258.c" />
+    <ClCompile Include="zlib-ng\compress.c" />
+    <ClCompile Include="zlib-ng\crc32.c" />
+    <ClCompile Include="zlib-ng\crc32_comb.c" />
+    <ClCompile Include="zlib-ng\deflate.c" />
+    <ClCompile Include="zlib-ng\deflate_fast.c" />
+    <ClCompile Include="zlib-ng\deflate_medium.c" />
+    <ClCompile Include="zlib-ng\deflate_quick.c" />
+    <ClCompile Include="zlib-ng\deflate_slow.c" />
+    <ClCompile Include="zlib-ng\functable.c" />
+    <ClCompile Include="zlib-ng\gzlib.c" />
+    <ClCompile Include="zlib-ng\gzread.c" />
+    <ClCompile Include="zlib-ng\gzwrite.c" />
+    <ClCompile Include="zlib-ng\infback.c" />
+    <ClCompile Include="zlib-ng\inffast.c" />
+    <ClCompile Include="zlib-ng\inflate.c" />
+    <ClCompile Include="zlib-ng\inftrees.c" />
+    <ClCompile Include="zlib-ng\insert_string.c" />
+    <ClCompile Include="zlib-ng\trees.c" />
+    <ClCompile Include="zlib-ng\uncompr.c" />
+    <ClCompile Include="zlib-ng\zutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="zconf-ng.h" />
+    <ClInclude Include="zlib-ng\adler32_p.h" />
+    <ClInclude Include="zlib-ng\arch\x86\crc_folding.h" />
+    <ClInclude Include="zlib-ng\arch\x86\x86.h" />
+    <ClInclude Include="zlib-ng\chunkset_tpl.h" />
+    <ClInclude Include="zlib-ng\crc32_comb_tbl.h" />
+    <ClInclude Include="zlib-ng\crc32_p.h" />
+    <ClInclude Include="zlib-ng\crc32_tbl.h" />
+    <ClInclude Include="zlib-ng\deflate.h" />
+    <ClInclude Include="zlib-ng\deflate_p.h" />
+    <ClInclude Include="zlib-ng\fallback_builtins.h" />
+    <ClInclude Include="zlib-ng\functable.h" />
+    <ClInclude Include="zlib-ng\gzguts.h" />
+    <ClInclude Include="zlib-ng\inffast.h" />
+    <ClInclude Include="zlib-ng\inffixed_tbl.h" />
+    <ClInclude Include="zlib-ng\inflate.h" />
+    <ClInclude Include="zlib-ng\inflate_p.h" />
+    <ClInclude Include="zlib-ng\inftrees.h" />
+    <ClInclude Include="zlib-ng\insert_string_tpl.h" />
+    <ClInclude Include="zlib-ng\match_tpl.h" />
+    <ClInclude Include="zlib-ng\trees.h" />
+    <ClInclude Include="zlib-ng\trees_emit.h" />
+    <ClInclude Include="zlib-ng\trees_tbl.h" />
+    <ClInclude Include="zlib-ng\zbuild.h" />
+    <ClInclude Include="zlib-ng\zendian.h" />
+    <ClInclude Include="zlib-ng\zlib-ng.h" />
+    <ClInclude Include="zlib-ng\zlib.h" />
+    <ClInclude Include="zlib-ng\zutil.h" />
+    <ClInclude Include="zlib-ng\zutil_p.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{b802be30-559b-4cee-9f02-32e3a2b4fa85}</ProjectGuid>
+    <RootNamespace>zlibng</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
