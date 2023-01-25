@@ -18,8 +18,14 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         gRSP = nullptr;
         break;
     case DLL_THREAD_ATTACH:
+        break;
     case DLL_THREAD_DETACH:
+        break;
     case DLL_PROCESS_DETACH:
+        if (auto rsp = std::exchange(gRSP, nullptr))
+        {
+            FreeLibrary(rsp);
+        }
         break;
     }
     return TRUE;
@@ -54,9 +60,12 @@ static void loadRSP()
         return;
     }
 
-    // Retain ourselves, forever and ever
-    LoadLibrary(path);
-    plantHooks();
+    bool ok = plantHooks();
+    if (ok)
+    {
+        // Retain ourselves, forever and ever
+        LoadLibrary(path);
+    }
 
     // Load original RSP
     std::filesystem::path dllpath{ path };

@@ -406,7 +406,7 @@ static bool tryNamePJ64() noexcept
 }
 
 // MARK: Enterance from 'RSP' init
-void plantHooks()
+bool plantHooks()
 {
     bool ok = false;
     // Check if we are in PJ64 1.6, heuristically
@@ -430,4 +430,6 @@ void plantHooks()
     {
         gHookManager.init();
     }
+
+    return ok;
 }
