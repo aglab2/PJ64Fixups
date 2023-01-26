@@ -433,3 +433,25 @@ bool plantHooks()
 
     return ok;
 }
+
+void zapRSPInit()
+{
+    /*
+     Zapping the function writes prolog immediately after DllInfo call
+     0044DD04 83 C4 04             add         esp,4  
+     ...
+     0044DE59 5F                   pop         edi  
+     0044DE5A 5E                   pop         esi  
+     ...
+     0044DE60 B8 01 00 00 00       mov         eax,1  
+     0044DE65 5B                   pop         ebx  
+     0044DE66 81 C4 9C 01 00 00    add         esp,19Ch  
+     0044DE6C C3                   ret  
+    */
+    static const unsigned char code[] = { 0x83, 0xC4, 0x04, 
+                                          0x5F, 0x5E, 
+                                          0xB8, 0x01, 0x00, 0x00, 0x00, 0x5B, 0x81, 0xC4, 0x9C, 0x01, 0x00, 0x00, 0xC3 };
+
+    unprotect((void*)0x44DCF7, sizeof(code));
+    memcpy((void*)0x44DCF7, code, sizeof(code));
+}

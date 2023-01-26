@@ -60,24 +60,65 @@ namespace PJ64
 			return *(RomClosedFn*)0x004D819C;
 		}
 
-		static inline RomClosedFn RSPRomClosed()
+		static inline RomClosedFn& RSPRomClosed()
 		{
 			return *(RomClosedFn*)0x004D7FB8;
 		}
 
-		static Timer* FPSTimer()
+		static inline Timer* FPSTimer()
 		{
 			return (Timer*)0x0046BD00;
 		}
 
-		static HANDLE hCPU()
+		static inline HANDLE hCPU()
 		{
 			return *(HANDLE*) 0x004D75EC;
 		}
 
-		static DWORD CPU_Type()
+		static inline DWORD CPU_Type()
 		{
 			return *(DWORD*) 0x4D7F70;
+		}
+
+		static inline WORD& RSPVersion()
+		{
+			return *(WORD*) 0x004D1544;
+		}
+
+		using GenericFn = void*;
+		static inline GenericFn& DoRspCycles()
+		{
+			return *(GenericFn*)0x4D7F90;
+		}
+
+		static inline GenericFn& InitiateRSP_1_0()
+		{
+			return *(GenericFn*)0x4D7FF0;
+		}
+
+		static inline GenericFn& InitiateRSP_1_1()
+		{
+			return *(GenericFn*)0x4D7FEC;
+		}
+
+		static inline GenericFn& RSPCloseDLL()
+		{
+			return *(GenericFn*)0x4D804C;
+		}
+
+		static inline GenericFn& GetRspDebugInfo()
+		{
+			return *(GenericFn*)0x4D81F4;
+		}
+
+		static inline GenericFn& InitiateRSPDebugger()
+		{
+			return *(GenericFn*)0x4D7F9C;
+		}
+
+		static inline GenericFn& RSPDllConfig()
+		{
+			return *(GenericFn*)0x4D81CC;
 		}
 	}
 }
