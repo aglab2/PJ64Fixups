@@ -7,3 +7,6 @@
 [submodule "Thirdparty/libui-ng"]
 	path = Thirdparty/libui-ng
 	url = https://github.com/libui-ng/libui-ng.git
+[submodule "Thirdparty/yaml-cpp"]
+	path = Thirdparty/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git

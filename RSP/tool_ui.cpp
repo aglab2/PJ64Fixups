@@ -1,4 +1,6 @@
 #include "ui.h"
+#include "config.h"
+
 #include <stdlib.h>
 #include <memory>
 
@@ -31,13 +33,9 @@ namespace UI
 			uiBoxSetPadded(b, 1);
 			uiWindowSetChild(w, uiControl(b));
 
-			addCheckbox(b, fastStates_ = uiNewCheckbox("Do not reinitialize emu on state load"));
-			addCheckbox(b, fastResets_ = uiNewCheckbox("Do not reinitialize emu on soft reset"));
-			addCheckbox(b, fixSlowResets_ = uiNewCheckbox("Fix slow resets"));
-			addCheckbox(b, noLoadSlowdown_ = uiNewCheckbox("Remove sleeps on ROM open"));
-			addCheckbox(b, cf1ByDefault_ = uiNewCheckbox("CF1 by default"));
-			addCheckbox(b, useFastDecompression_ = uiNewCheckbox("Use fast ZIP decompression"));
-			addCheckbox(b, cacheLastSavestate_ = uiNewCheckbox("Cache last loaded savestate"));
+#define CONFIG(name, desc) addCheckbox(b, name##_ = uiNewCheckbox(desc)); uiCheckboxSetChecked(name##_, sConfig.name);
+#include "xconfig.h"
+#undef CONFIG
 
 			uiWindowOnClosing(w, onClosing, NULL);
 			uiControlShow(uiControl(w));
@@ -49,13 +47,9 @@ namespace UI
 		}
 
 	private:
-		uiCheckbox* fastStates_;
-		uiCheckbox* fastResets_;
-		uiCheckbox* fixSlowResets_;
-		uiCheckbox* noLoadSlowdown_;
-		uiCheckbox* cf1ByDefault_;
-		uiCheckbox* useFastDecompression_;
-		uiCheckbox* cacheLastSavestate_;
+#define CONFIG(name, desc) uiCheckbox* name##_;
+#include "xconfig.h"
+#undef CONFIG
 
 		static void initOnce()
 		{
@@ -73,6 +67,10 @@ namespace UI
 
 		void onCheckBoxChange(uiCheckbox* sender)
 		{
+#define CONFIG(name, desc) sConfig.name = !!uiCheckboxChecked(name##_);
+#include "xconfig.h"
+#undef CONFIG
+			sConfig.save();
 		}
 
 		static int onClosing(uiWindow* w, void* data)

@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E4D7696F-0841-3E78-A171-81A81AFE5893}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>yaml-cpp</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir>$(ProjectDir)\yaml-cpp\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <TargetName>libyaml</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4127;4355</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>YAML_CPP_STATIC_DEFINE;WIN32;_WINDOWS;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DisableSpecificWarnings>4127;4355</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>YAML_CPP_STATIC_DEFINE;WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4127;4355</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>YAML_CPP_STATIC_DEFINE;WIN32;_WINDOWS;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DisableSpecificWarnings>4127;4355</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>YAML_CPP_STATIC_DEFINE;WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>.\yaml-cpp\include;.\yaml-cpp\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include=".\yaml-cpp\src\binary.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\convert.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\directives.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\emit.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\emitfromevents.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\emitter.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\emitterstate.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\emitterutils.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\exceptions.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\exp.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\memory.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\node.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\node_data.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\nodebuilder.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\nodeevents.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\null.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\ostream_wrapper.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\parse.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\parser.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\regex_yaml.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\scanner.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\scanscalar.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\scantag.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\scantoken.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\simplekey.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\singledocparser.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\stream.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\tag.cpp" />
+    <ClCompile Include="yaml-cpp\src\depthguard.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\anchor.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\binary.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\dll.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\emitter.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\emitterdef.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\emittermanip.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\eventhandler.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\exceptions.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\mark.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\convert.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\bool_type.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\emit.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\impl.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\iterator.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\node.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\parse.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\ptr.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\node\type.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\null.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\parser.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\stlemitter.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\traits.h" />
+    <ClInclude Include=".\yaml-cpp\include\yaml-cpp\yaml.h" />
+    <ClInclude Include=".\yaml-cpp\src\collectionstack.h" />
+    <ClInclude Include=".\yaml-cpp\src\directives.h" />
+    <ClInclude Include=".\yaml-cpp\src\emitterstate.h" />
+    <ClInclude Include=".\yaml-cpp\src\emitterutils.h" />
+    <ClInclude Include=".\yaml-cpp\src\exp.h" />
+    <ClInclude Include=".\yaml-cpp\src\indentation.h" />
+    <ClInclude Include=".\yaml-cpp\src\nodebuilder.h" />
+    <ClInclude Include=".\yaml-cpp\src\nodeevents.h" />
+    <ClInclude Include=".\yaml-cpp\src\ptr_vector.h" />
+    <ClInclude Include=".\yaml-cpp\src\regex_yaml.h" />
+    <ClInclude Include=".\yaml-cpp\src\regeximpl.h" />
+    <ClInclude Include=".\yaml-cpp\src\scanner.h" />
+    <ClInclude Include=".\yaml-cpp\src\scanscalar.h" />
+    <ClInclude Include=".\yaml-cpp\src\scantag.h" />
+    <ClInclude Include=".\yaml-cpp\src\setting.h" />
+    <ClInclude Include=".\yaml-cpp\src\singledocparser.h" />
+    <ClInclude Include=".\yaml-cpp\src\stream.h" />
+    <ClInclude Include=".\yaml-cpp\src\streamcharsource.h" />
+    <ClInclude Include=".\yaml-cpp\src\stringsource.h" />
+    <ClInclude Include=".\yaml-cpp\src\tag.h" />
+    <ClInclude Include=".\yaml-cpp\src\token.h" />
+    <ClCompile Include=".\yaml-cpp\src\contrib\graphbuilder.cpp" />
+    <ClCompile Include=".\yaml-cpp\src\contrib\graphbuilderadapter.cpp" />
+    <ClInclude Include=".\yaml-cpp\src\contrib\graphbuilderadapter.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

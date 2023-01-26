@@ -2,6 +2,7 @@
 #include "hooks_priv.h"
 
 #include "backtrace.h"
+#include "config.h"
 #include "minizip.h"
 #include "pj64_globals.h"
 #include "timer.h"
@@ -126,7 +127,10 @@ void HookManager::init()
     >>>
     0041DD61  cmp         dword ptr ds:[4D81A4h],edi
     */
-    writeCall(0x0041DD35, 0x0041DD5F + 2 - 0x0041DD35, &hookCloseCpuRomClosed);
+    if (sConfig.fastResets)
+    {
+        writeCall(0x0041DD35, 0x0041DD5F + 2 - 0x0041DD35, &hookCloseCpuRomClosed);
+    }
 
     /*
     Machine_LoadState
@@ -155,8 +159,13 @@ void HookManager::init()
     0041F33C  je          0041F340
     0041F33E  call        eax
     */
-    writeCall(0x0041F2FE, 0x0041F33E - 0x0041F2FE + 2, &hookMachine_LoadStateRomReinit);
-
+    if (sConfig.fastStates || sConfig.fixLoadStateStutter)
+    {
+        writeCall(0x0041F2FE, 0x0041F33E - 0x0041F2FE + 2, &hookMachine_LoadStateRomReinit);
+    }
+    
+    if (sConfig.noLoadSlowdown)
+    {
     /*
     OpenChosenFile
     00449ED6  jl          00449EC9  
@@ -168,7 +177,7 @@ void HookManager::init()
     > 00449EEA  call        dword ptr ds:[46719Ch]  
     00449EF0  call        0041DC00  
     */
-    fillNop((uint8_t*)0x00449EE5, 0x00449EF0 - 0x00449EE5);
+        fillNop((uint8_t*)0x00449EE5, 0x00449EF0 - 0x00449EE5);
     /*
     0044A7E6  push        ecx  
     0044A7E7  call        dword ptr ds:[467300h]  
@@ -177,7 +186,7 @@ void HookManager::init()
     0044A7EF  call        dword ptr ds:[46719Ch] 
     0044A7F5  mov         eax,dword ptr ds:[004D526Ch] 
     */
-    fillNop((uint8_t*)0x0044A7ED, 0x0044A7F5 - 0x0044A7ED);
+        fillNop((uint8_t*)0x0044A7ED, 0x0044A7F5 - 0x0044A7ED);
     /*
     0044A31B  push        0  
     0044A31D  push        401h  
@@ -188,7 +197,8 @@ void HookManager::init()
     0044A327  call        dword ptr ds:[46719Ch]  
     0044A32D  mov         eax,dword ptr ds:[004D526Ch] 
     */
-    fillNop((uint8_t*)0x0044A325, 0x0044A32D - 0x0044A325);
+        fillNop((uint8_t*)0x0044A325, 0x0044A32D - 0x0044A325);
+    }
 
     /*
     0041DC00  mov         eax,dword ptr ds:[004D7610h]
@@ -248,16 +258,17 @@ void HookManager::init()
     0041DCCE  mov         ecx,dword ptr ds:[4D6A24h]
     */
     // Remove dumb sleep
+    if (sConfig.fixSlowResets)
     {
         UnprotectedMemoryScope scope{ (void*)0x0041DC80, 0x0041DC96 - 0x0041DC80 };
         uint8_t code[] = { 0x8D, 0x4C, 0x24, 0x10, 0x51 };
         memcpy((void*)0x0041DC80, code, sizeof(code));
         doWriteCall(0x0041DC80 + sizeof(code), 0x0041DC96 - (0x0041DC80 + sizeof(code)), &hookCloseCpu);
-    }
 
-    // Some AV solution might slap me for this but I do not want to hook all 'SendMessage' calls from hCPU
-    // TODO: Realistically there is only one "bad" call so hook only that
-    *(uintptr_t*)0x467300 = (uintptr_t) &HookManager::hookSendMessageA;
+        // Some AV solution might slap me for this but I do not want to hook all 'SendMessage' calls from hCPU
+        // TODO: Realistically there is only one "bad" call so hook only that
+        *(uintptr_t*)0x467300 = (uintptr_t)&HookManager::hookSendMessageA;
+    }
 
     /*
     StartRecompilerCPU
@@ -280,7 +291,10 @@ void HookManager::init()
     00432EDB  rep stos    dword ptr es:[edi]
     */
     // Only handling recompiler case here, don't care about other crap
-    writeCall(0x00432EB4, 0x00432ECA - 0x00432EB4, &hookStartRecompiledCpuRomOpen);
+    if (sConfig.fastResets)
+    {
+        writeCall(0x00432EB4, 0x00432ECA - 0x00432EB4, &hookStartRecompiledCpuRomOpen);
+    }
 
     // hook create file just for debugging
     // *(uintptr_t*)0x467068 = (uintptr_t)&HookManager::hookCreateFileA;
@@ -301,31 +315,34 @@ void HookManager::init()
     // 0044A5DD  call        0041B7B0 - unzCloseCurrentFile
     // 0044A5E3  call        0041A520 - unzClose
     // 0044A578  call        0041AF30 - unzGoToNextFile
-#if 0
-    writeJump(0x00419FB0, 5, unzOpen);
-    writeJump(0x0041AEE0, 5, unzGoToFirstFile);
-    writeJump(0x0041A590, 5, unzGetCurrentFileInfo);
-    writeJump(0x0041AFB0, 5, unzLocateFile);
-    writeJump(0x0041B1A0, 5, unzOpenCurrentFile);
-    writeJump(0x0041B5C0, 5, unzReadCurrentFile);
-    writeJump(0x0041B7B0, 5, unzCloseCurrentFile);
-    writeJump(0x0041A520, 5, unzClose);
-    writeJump(0x0041AF30, 5, unzGoToNextFile);
-#endif
-#if 1
-    writeJump(0x00419FB0, 5, unzDispatchOpen);
-    writeJump(0x0041AEE0, 5, unzDispatchGoToFirstFile);
-    writeJump(0x0041A590, 5, unzDispatchGetCurrentFileInfo);
-    writeJump(0x0041AFB0, 5, unzDispatchLocateFile);
-    writeJump(0x0041B1A0, 5, unzDispatchOpenCurrentFile);
-    writeJump(0x0041B5C0, 5, unzDispatchReadCurrentFile);
-    writeJump(0x0041B7B0, 5, unzDispatchCloseCurrentFile);
-    writeJump(0x0041A520, 5, unzDispatchClose);
-    writeJump(0x0041AF30, 5, unzDispatchGoToNextFile);
-#endif
+    if (sConfig.useFastDecompression)
+    {
+        writeJump(0x00419FB0, 5, unzDispatchOpen);
+        writeJump(0x0041AEE0, 5, unzDispatchGoToFirstFile);
+        writeJump(0x0041A590, 5, unzDispatchGetCurrentFileInfo);
+        writeJump(0x0041AFB0, 5, unzDispatchLocateFile);
+        writeJump(0x0041B1A0, 5, unzDispatchOpenCurrentFile);
+        writeJump(0x0041B5C0, 5, unzDispatchReadCurrentFile);
+        writeJump(0x0041B7B0, 5, unzDispatchCloseCurrentFile);
+        writeJump(0x0041A520, 5, unzDispatchClose);
+        writeJump(0x0041AF30, 5, unzDispatchGoToNextFile);
+    }
+    else if (sConfig.useFastDecompression)
+    {
+        writeJump(0x00419FB0, 5, unzOpen);
+        writeJump(0x0041AEE0, 5, unzGoToFirstFile);
+        writeJump(0x0041A590, 5, unzGetCurrentFileInfo);
+        writeJump(0x0041AFB0, 5, unzLocateFile);
+        writeJump(0x0041B1A0, 5, unzOpenCurrentFile);
+        writeJump(0x0041B5C0, 5, unzReadCurrentFile);
+        writeJump(0x0041B7B0, 5, unzCloseCurrentFile);
+        writeJump(0x0041A520, 5, unzClose);
+        writeJump(0x0041AF30, 5, unzGoToNextFile);
+    }
 
     // CF1 by default
     // 004492FA C7 05 E0 75 4D 00 02 00 00 00 mov         dword ptr ds:[4D75E0h],2 
+    if (sConfig.cf1ByDefault)
     {
         UnprotectedMemoryScope scope{ (void*)0x449300, 1 };
         *(uint8_t*)0x449300 = 1;
@@ -361,15 +378,25 @@ void HookManager::hookStartRecompiledCpuRomOpen()
 
 void HookManager::hookMachine_LoadStateRomReinit()
 {
-    // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
-    // INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
-    // INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
-    INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
-    // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomOpen)
-    // INVOKE_PJ64_PLUGIN_CALLBACK(ContRomOpen)
+    if (sConfig.fastStates)
+    {
+        INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
+    }
+    else
+    {
+        INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
+        INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
+        INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
+        INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
+        INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomOpen)
+        INVOKE_PJ64_PLUGIN_CALLBACK(ContRomOpen)
+    }
 
     // Fix for the stutters
-    PJ64::Globals::FPSTimer()->reset();
+    if (sConfig.fixLoadStateStutter)
+    {
+        PJ64::Globals::FPSTimer()->reset();
+    }
 }
 
 void __stdcall HookManager::hookCloseCpu(DWORD* ExitCode)
