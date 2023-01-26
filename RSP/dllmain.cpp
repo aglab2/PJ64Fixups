@@ -2,10 +2,12 @@
 
 #include "hooks.h"
 #include "pj64_globals.h"
+#include "tool_ui.h"
 #include "Rsp #1.1.h"
 
 #include <filesystem>
 
+extern HINSTANCE hInstance;
 static HMODULE gRSP = nullptr;
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -16,6 +18,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
         // Just in case
+        hInstance = hModule;
         gRSP = nullptr;
         break;
     case DLL_THREAD_ATTACH:
@@ -98,7 +101,8 @@ static BOOL setupRSP()
     if (PJ64::Globals::RSPCloseDLL() == NULL) { return FALSE; }
     PJ64::Globals::GetRspDebugInfo() = GetProcAddress(gRSP, "GetRspDebugInfo");
     PJ64::Globals::InitiateRSPDebugger() = GetProcAddress(gRSP, "InitiateRSPDebugger");
-    PJ64::Globals::RSPDllConfig() = GetProcAddress(gRSP, "DllConfig");
+    gDllConfig = (DllConfigFn) GetProcAddress(gRSP, "DllConfig");
+    PJ64::Globals::RSPDllConfig() = DllConfig;
 
     return TRUE;
 }
@@ -149,7 +153,7 @@ static void loadRSP()
 
 EXPORT void CALL CloseDLL(void) { LOAD_RSP(); gCloseDLL(); }
 EXPORT void CALL DllAbout(HWND hParent) { LOAD_RSP(); gDllAbout(hParent); }
-EXPORT void CALL DllConfig(HWND hParent) { LOAD_RSP(); gDllConfig(hParent); }
+EXPORT void CALL DllConfig(HWND hParent) { LOAD_RSP(); UI::show(); /* gDllConfig(hParent); */ }
 EXPORT void CALL DllTest(HWND hParent) { LOAD_RSP(); gDllTest(hParent); }
 EXPORT DWORD CALL DoRspCycles(DWORD Cycles) { LOAD_RSP(); return gDoRspCycles(Cycles); }
 EXPORT void CALL GetDllInfo(PLUGIN_INFO* PluginInfo) { LOAD_RSP(); gGetDllInfo(PluginInfo); }
