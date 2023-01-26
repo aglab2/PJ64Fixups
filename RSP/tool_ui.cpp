@@ -23,7 +23,7 @@ namespace UI
 
 			uiBox* b;
 
-			auto w = uiNewWindow("Fixups configs", 200, 240, 0);
+			auto w = uiNewWindow("Fixups", 200, 240, 0);
 			uiWindowSetMargined(w, true);
 			uiWindowSetResizeable(w, false);
 
@@ -36,6 +36,8 @@ namespace UI
 			addCheckbox(b, fixSlowResets_ = uiNewCheckbox("Fix slow resets"));
 			addCheckbox(b, noLoadSlowdown_ = uiNewCheckbox("Remove sleeps on ROM open"));
 			addCheckbox(b, cf1ByDefault_ = uiNewCheckbox("CF1 by default"));
+			addCheckbox(b, useFastDecompression_ = uiNewCheckbox("Use fast ZIP decompression"));
+			addCheckbox(b, cacheLastSavestate_ = uiNewCheckbox("Cache last loaded savestate"));
 
 			uiWindowOnClosing(w, onClosing, NULL);
 			uiControlShow(uiControl(w));
@@ -52,6 +54,8 @@ namespace UI
 		uiCheckbox* fixSlowResets_;
 		uiCheckbox* noLoadSlowdown_;
 		uiCheckbox* cf1ByDefault_;
+		uiCheckbox* useFastDecompression_;
+		uiCheckbox* cacheLastSavestate_;
 
 		static void initOnce()
 		{

@@ -184,6 +184,7 @@ void HookManager::init()
     0044A322  push        edx  
     0044A323  call        ebp  
     0044A325  push        64h  
+    // Useless Sleep(100)
     0044A327  call        dword ptr ds:[46719Ch]  
     0044A32D  mov         eax,dword ptr ds:[004D526Ch] 
     */
