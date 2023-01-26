@@ -8,6 +8,7 @@
 #include "reset_recognizer.h"
 #include "unzdispatch.h"
 
+#include <assert.h>
 #include <stdint.h>
 
 #include <Commctrl.h>
@@ -16,12 +17,32 @@ constexpr char NAME[] = "LINK's Project64";
 
 static HookManager gHookManager;
 
-static int unprotect(void* address, size_t size)
+class UnprotectedMemoryScope
 {
-    DWORD old_flags;
-    BOOL result = VirtualProtect(address, size, PAGE_EXECUTE_READWRITE, &old_flags);
-    return 0 != result;
-}
+public:
+    UnprotectedMemoryScope(void* address, size_t size)
+        : address_(address)
+        , size_(size)
+    {
+        BOOL result = VirtualProtect(address_, size_, PAGE_EXECUTE_READWRITE, &oldFlags_);
+        if (FALSE == result)
+            abort();
+    }
+    ~UnprotectedMemoryScope()
+    {
+        DWORD origFlags_;
+        VirtualProtect(address_, size_, oldFlags_, &origFlags_);
+        assert(origFlags_, PAGE_EXECUTE_READWRITE);
+    }
+
+    UnprotectedMemoryScope(const UnprotectedMemoryScope&) = delete;
+    UnprotectedMemoryScope& operator=(const UnprotectedMemoryScope&) = delete;
+
+private:
+    void* address_;
+    size_t size_;
+    DWORD oldFlags_;
+};
 
 static uint8_t nops[] =
 { 0x90,
@@ -72,13 +93,13 @@ static void doWriteJump(uintptr_t codeStart, size_t sz, void* fn)
 
 static void writeCall(uintptr_t codeStart, size_t sz, void* fn)
 {
-    unprotect((void*)codeStart, sz);
+    UnprotectedMemoryScope mem{ (void*)codeStart, sz };
     doWriteCall(codeStart, sz, fn);
 }
 
 static void writeJump(uintptr_t codeStart, size_t sz, void* fn)
 {
-    unprotect((void*)codeStart, sz);
+    UnprotectedMemoryScope mem{ (void*)codeStart, sz };
     doWriteJump(codeStart, sz, fn);
 }
 
@@ -226,10 +247,12 @@ void HookManager::init()
     0041DCCE  mov         ecx,dword ptr ds:[4D6A24h]
     */
     // Remove dumb sleep
-    unprotect((void*)0x0041DC80, 0x0041DC96 - 0x0041DC80);
-    uint8_t code[] = { 0x8D, 0x4C, 0x24, 0x10, 0x51 };
-    memcpy((void*)0x0041DC80, code, sizeof(code));
-    doWriteCall(0x0041DC80 + sizeof(code), 0x0041DC96 - (0x0041DC80 + sizeof(code)), &hookCloseCpu);
+    {
+        UnprotectedMemoryScope scope{ (void*)0x0041DC80, 0x0041DC96 - 0x0041DC80 };
+        uint8_t code[] = { 0x8D, 0x4C, 0x24, 0x10, 0x51 };
+        memcpy((void*)0x0041DC80, code, sizeof(code));
+        doWriteCall(0x0041DC80 + sizeof(code), 0x0041DC96 - (0x0041DC80 + sizeof(code)), &hookCloseCpu);
+    }
 
     // Some AV solution might slap me for this but I do not want to hook all 'SendMessage' calls from hCPU
     // TODO: Realistically there is only one "bad" call so hook only that
@@ -302,8 +325,10 @@ void HookManager::init()
 
     // CF1 by default
     // 004492FA C7 05 E0 75 4D 00 02 00 00 00 mov         dword ptr ds:[4D75E0h],2 
-    unprotect((void*)0x449300, 1);
-    *(uint8_t*) 0x449300 = 1;
+    {
+        UnprotectedMemoryScope scope{ (void*)0x449300, 1 };
+        *(uint8_t*)0x449300 = 1;
+    }
 }
 
 #define INVOKE_PJ64_PLUGIN_CALLBACK(name) if (auto fn = PJ64::Globals::name()) { fn(); }
@@ -452,6 +477,6 @@ void zapRSPInit()
                                           0x5F, 0x5E, 
                                           0xB8, 0x01, 0x00, 0x00, 0x00, 0x5B, 0x81, 0xC4, 0x9C, 0x01, 0x00, 0x00, 0xC3 };
 
-    unprotect((void*)0x44DCF7, sizeof(code));
+    UnprotectedMemoryScope scope{ (void*)0x44DCF7, sizeof(code) };
     memcpy((void*)0x44DCF7, code, sizeof(code));
 }
