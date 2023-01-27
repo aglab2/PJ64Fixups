@@ -23,22 +23,23 @@ namespace UI
 		{
 			initOnce();
 
-			uiBox* b;
+			auto window = uiNewWindow("Fixups", 200, 200, 0);
+			uiWindowSetMargined(window, true);
+			uiWindowSetResizeable(window, false);
 
-			auto w = uiNewWindow("Fixups", 200, 240, 0);
-			uiWindowSetMargined(w, true);
-			uiWindowSetResizeable(w, false);
+			auto box = uiNewVerticalBox();
+			uiBoxSetPadded(box, 1);
+			uiWindowSetChild(window, uiControl(box));
 
-			b = uiNewVerticalBox();
-			uiBoxSetPadded(b, 1);
-			uiWindowSetChild(w, uiControl(b));
+			auto label = uiNewLabel("[!] Restart PJ64 after changing configs [!]");
+			uiBoxAppend(box, uiControl(label), false);
 
-#define CONFIG(name, desc) addCheckbox(b, name##_ = uiNewCheckbox(desc)); uiCheckboxSetChecked(name##_, sConfig.name);
+#define CONFIG(name, desc) addCheckbox(box, name##_ = uiNewCheckbox(desc)); uiCheckboxSetChecked(name##_, sConfig.name);
 #include "xconfig.h"
 #undef CONFIG
 
-			uiWindowOnClosing(w, onClosing, NULL);
-			uiControlShow(uiControl(w));
+			uiWindowOnClosing(window, onClosing, NULL);
+			uiControlShow(uiControl(window));
 		}
 
 		void run()
