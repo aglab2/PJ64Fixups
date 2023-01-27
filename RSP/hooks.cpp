@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <Commctrl.h>
+#include <thread>
 
 constexpr char NAME[] = "LINK's Project64";
 
@@ -264,10 +264,6 @@ void HookManager::init()
         uint8_t code[] = { 0x8D, 0x4C, 0x24, 0x10, 0x51 };
         memcpy((void*)0x0041DC80, code, sizeof(code));
         doWriteCall(0x0041DC80 + sizeof(code), 0x0041DC96 - (0x0041DC80 + sizeof(code)), &hookCloseCpu);
-
-        // Some AV solution might slap me for this but I do not want to hook all 'SendMessage' calls from hCPU
-        // TODO: Realistically there is only one "bad" call so hook only that
-        *(uintptr_t*)0x467300 = (uintptr_t)&HookManager::hookSendMessageA;
     }
 
     /*
@@ -401,43 +397,23 @@ void HookManager::hookMachine_LoadStateRomReinit()
 
 void __stdcall HookManager::hookCloseCpu(DWORD* ExitCode)
 {
-    HANDLE hCPU = PJ64::Globals::hCPU();
-    WaitForSingleObject(hCPU, 100);
-    GetExitCodeThread(hCPU, ExitCode);
-}
+    auto tid = GetCurrentThreadId();
+    std::thread waitThread{ [=]() {
+        HANDLE hCPU = PJ64::Globals::hCPU();
+        WaitForSingleObject(hCPU, 100);
+        GetExitCodeThread(hCPU, ExitCode);
+        PostThreadMessage(tid, WM_APP + 1, 0, 0);
+    } };
 
-#define LINE_LENGTH 128
-#define LINE_CNT 16
-static int sContentCycle = 0;
-static char sContent[LINE_LENGTH*LINE_CNT];
-LRESULT WINAPI HookManager::hookSendMessageA(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
-{
-    DWORD hCPUId = GetThreadId(PJ64::Globals::hCPU());
-    DWORD curThreadId = GetCurrentThreadId();
-    if (hCPUId == curThreadId)
+    MSG msg;
+    while (GetMessage(&msg, 0, 0, 0))
     {
-        if (Msg == SB_SETTEXT)
-        {
-            char* line = &sContent[LINE_LENGTH * (sContentCycle % LINE_CNT)];
-            sContentCycle++;
-            strncpy_s(line, LINE_LENGTH, (char*)lParam, LINE_LENGTH);
-            ::PostMessageA(hWnd, Msg, wParam, (LPARAM)line);
-            return 0;
-        }
-        else
-        {
-            return ::SendMessageA(hWnd, Msg, wParam, lParam);
-        }
-    }
-    else
-    {
-        return ::SendMessageA(hWnd, Msg, wParam, lParam);
-    }
-}
+        if (msg.message == WM_APP + 1)
+            break;
 
-HANDLE WINAPI HookManager::hookCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
-{
-    return CreateFileA(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+        DispatchMessage(&msg);
+    }
+    waitThread.join();
 }
 
 static bool tryNamePJ64() noexcept
