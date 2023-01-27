@@ -4,6 +4,7 @@
 #include "pj64_globals.h"
 #include "tool_ui.h"
 #include "Rsp #1.1.h"
+#include "rsp.h"
 
 #include <filesystem>
 
@@ -122,12 +123,7 @@ static void loadRSP()
     }
 
     // Load original RSP
-    {
-        std::filesystem::path dllpath{ path };
-        const auto& dir = dllpath.remove_filename();
-        auto rsppath = dir / "RSP.dat";
-        gRSP = LoadLibraryW(rsppath.c_str());
-    }
+    gRSP = LoadLibrary(RSP::unpack());
 
     bool ok = plantHooks();
     if (ok)

@@ -178,6 +178,7 @@
     <ClCompile Include="memunz.cpp" />
     <ClCompile Include="minizip.cpp" />
     <ClCompile Include="reset_recognizer.cpp" />
+    <ClCompile Include="rsp.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="tool_ui.cpp" />
     <ClCompile Include="unzdispatch.cpp" />
@@ -191,12 +192,21 @@
     <ClInclude Include="minizip.h" />
     <ClInclude Include="pj64_globals.h" />
     <ClInclude Include="reset_recognizer.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="Rsp #1.1.h" />
+    <ClInclude Include="rsp.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="tool_ui.h" />
     <ClInclude Include="unzdispatch.h" />
     <ClInclude Include="xconfig.h" />
     <ClInclude Include="xmacro.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RSP.dat" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
