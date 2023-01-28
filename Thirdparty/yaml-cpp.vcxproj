@@ -59,7 +59,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <IntDir>$(ProjectDir)\yaml-cpp\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\yaml-cpp\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <TargetName>libyaml</TargetName>
   </PropertyGroup>

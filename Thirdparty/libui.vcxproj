@@ -147,12 +147,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)\libui-ng\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\libui-ng\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)\libui-ng\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\libui-ng\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

@@ -140,12 +140,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <IntDir>$(ProjectDir)\zlib-ng\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\zlib-ng\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <IntDir>$(ProjectDir)\zlib-ng\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\zlib-ng\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

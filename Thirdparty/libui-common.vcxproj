@@ -94,11 +94,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(ProjectDir)\libui-ng\common\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\libui-ng\common\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(ProjectDir)\libui-ng\common\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\libui-ng\common\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
