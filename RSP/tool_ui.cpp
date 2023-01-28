@@ -1,4 +1,8 @@
-#include "ui.h"
+#include <ui.h>
+
+#include <windows.h>
+#include <ui_windows.h>
+
 #include "config.h"
 
 #include <stdlib.h>
@@ -19,13 +23,15 @@ namespace UI
 	class Window
 	{
 	public:
-		Window()
+		Window() : hwnd_(GetActiveWindow())
 		{
 			initOnce();
 
-			auto window = uiNewWindow("Fixups", 200, 200, 0);
+			auto window = uiNewWindow("Fixups", 200, 200, 0, hwnd_);
 			uiWindowSetMargined(window, true);
 			uiWindowSetResizeable(window, false);
+			// uiWindowsControlSetParentHWND(uiWindowsControl(window), hwnd_);
+			EnableWindow(hwnd_, FALSE);
 
 			auto box = uiNewVerticalBox();
 			uiBoxSetPadded(box, 1);
@@ -42,12 +48,20 @@ namespace UI
 			uiControlShow(uiControl(window));
 		}
 
+		~Window()
+		{
+			EnableWindow(hwnd_, TRUE);
+			SetActiveWindow(hwnd_);
+		}
+
 		void run()
 		{
 			uiMain();
 		}
 
 	private:
+		HWND hwnd_;
+
 #define CONFIG(name, desc) uiCheckbox* name##_;
 #include "xconfig.h"
 #undef CONFIG
