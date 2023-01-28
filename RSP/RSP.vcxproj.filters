@@ -92,9 +92,6 @@
     <ClInclude Include="xconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="rsp.h">
       <Filter>Header Files</Filter>
     </ClInclude>

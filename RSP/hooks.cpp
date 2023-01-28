@@ -159,9 +159,14 @@ void HookManager::init()
     0041F33C  je          0041F340
     0041F33E  call        eax
     */
-    if (sConfig.fastStates || sConfig.fixLoadStateStutter)
+    if (sConfig.fastStates)
     {
         writeCall(0x0041F2FE, 0x0041F33E - 0x0041F2FE + 2, &hookMachine_LoadStateRomReinit);
+    }
+
+    if (sConfig.fixLoadStateStutter)
+    {
+        writeCall(0x0041F4F3, 6, &hookMachine_LoadStateFinished);
     }
     
     if (sConfig.noLoadSlowdown)
@@ -374,25 +379,19 @@ void HookManager::hookStartRecompiledCpuRomOpen()
 
 void HookManager::hookMachine_LoadStateRomReinit()
 {
-    if (sConfig.fastStates)
-    {
-        INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
-    }
-    else
-    {
-        INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
-        INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
-        INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
-        INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
-        INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomOpen)
-        INVOKE_PJ64_PLUGIN_CALLBACK(ContRomOpen)
-    }
+    // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
+    // INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
+    // INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
+    INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
+    // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomOpen)
+    // INVOKE_PJ64_PLUGIN_CALLBACK(ContRomOpen)
+}
 
-    // Fix for the stutters
-    if (sConfig.fixLoadStateStutter)
-    {
-        PJ64::Globals::FPSTimer()->reset();
-    }
+LRESULT HookManager::hookMachine_LoadStateFinished(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    LRESULT result = SendMessageA(hWnd, Msg, wParam, lParam);
+    PJ64::Globals::FPSTimer()->reset();
+    return result;
 }
 
 void __stdcall HookManager::hookCloseCpu(DWORD* ExitCode)
