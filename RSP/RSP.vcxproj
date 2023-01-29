@@ -199,6 +199,7 @@
     <ClInclude Include="tool_ui.h" />
     <ClInclude Include="unzdispatch.h" />
     <ClInclude Include="xconfig.h" />
+    <ClInclude Include="xhotkeys.h" />
     <ClInclude Include="xmacro.h" />
   </ItemGroup>
   <ItemGroup>

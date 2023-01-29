@@ -33,17 +33,40 @@ namespace UI
 			// uiWindowsControlSetParentHWND(uiWindowsControl(window), hwnd_);
 			EnableWindow(hwnd_, FALSE);
 
-			auto box = uiNewVerticalBox();
-			uiBoxSetPadded(box, 1);
-			uiWindowSetChild(window, uiControl(box));
+			auto main = uiNewHorizontalBox();
+			uiBoxSetPadded(main, 1);
+			uiWindowSetChild(window, uiControl(main));
 
-			auto label = uiNewLabel("[!] Restart PJ64 after changing configs [!]");
-			uiBoxAppend(box, uiControl(label), false);
+			{
+				auto group = uiNewGroup("General");
+				auto box = uiNewVerticalBox();
+				uiGroupSetChild(group, uiControl(box));
+				auto label = uiNewLabel("[!] Restart PJ64 after changing configs [!]");
+				uiBoxAppend(box, uiControl(label), false);
 
-#define CONFIG(name, desc) addCheckbox(box, name##_ = uiNewCheckbox(desc)); uiCheckboxSetChecked(name##_, sConfig.name);
+#define CONFIG(name, desc) addCheckbox(box, name##_ = uiNewCheckbox(desc), &sConfig.name);
 #include "xconfig.h"
 #undef CONFIG
 
+				auto openOrig = uiNewButton("Open original RSP configs");
+				uiBoxAppend(box, uiControl(openOrig), false);
+
+				uiBoxAppend(main, uiControl(group), false);
+			}
+#if 0
+			{
+				auto group = uiNewGroup("Shortcuts");
+				auto grid = uiNewGrid();
+				uiGroupSetChild(group, uiControl(grid));
+
+				int counter = 0;
+#define HOTKEY(name, desc) addHotKey(counter, grid, desc);
+#include "xhotkeys.h"
+#undef HOTKEY
+
+				uiBoxAppend(main, uiControl(group), false);
+			}
+#endif
 			uiWindowOnClosing(window, onClosing, NULL);
 			uiControlShow(uiControl(window));
 		}
@@ -52,11 +75,6 @@ namespace UI
 		{
 			EnableWindow(hwnd_, TRUE);
 			SetActiveWindow(hwnd_);
-		}
-
-		void run()
-		{
-			uiMain();
 		}
 
 	private:
@@ -80,24 +98,26 @@ namespace UI
 			}
 		}
 
-		void onCheckBoxChange(uiCheckbox* sender)
-		{
-#define CONFIG(name, desc) sConfig.name = !!uiCheckboxChecked(name##_);
-#include "xconfig.h"
-#undef CONFIG
-			sConfig.save();
-		}
-
 		static int onClosing(uiWindow* w, void* data)
 		{
 			uiQuit();
 			return 1;
 		}
 
-		void addCheckbox(uiBox* b, uiCheckbox* cb)
+		void addCheckbox(uiBox* b, uiCheckbox* cb, bool* modifying)
 		{
-			uiCheckboxOnToggled(cb, [](auto cb, auto me) { ((Window*)me)->onCheckBoxChange(cb); }, this);
+			uiCheckboxOnToggled(cb, [](auto cb, auto modifyingCb) { *((bool*)modifyingCb) = uiCheckboxChecked(cb); }, modifying);
 			uiBoxAppend(b, uiControl(cb), false);
+			uiCheckboxSetChecked(cb, *modifying);
+		}
+
+		void addHotKey(int& counter, uiGrid* grid, const char* desc)
+		{
+			int val = counter++;
+			uiGridAppend(grid, uiControl(uiNewLabel(desc)), 0, val, 1, 1, 0, uiAlignStart, 0, uiAlignCenter);
+			uiGridAppend(grid, uiControl(uiNewButton("XD")), 1, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
+			uiGridAppend(grid, uiControl(uiNewButton("UWU")), 2, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
+			uiGridAppend(grid, uiControl(uiNewButton("PEKA")), 3, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
 		}
 	};
 
@@ -107,8 +127,9 @@ namespace UI
 		if (!Dialog)
 		{
 			Dialog = std::make_unique<Window>();
-			Dialog->run();
+			uiMain(); // blocks till window is closed
 			Dialog.reset();
+			sConfig.save();
 		}
 	}
 }
