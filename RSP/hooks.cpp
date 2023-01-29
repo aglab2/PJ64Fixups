@@ -167,6 +167,7 @@ void HookManager::init()
     if (sConfig.fixLoadStateStutter)
     {
         writeCall(0x0041F4F3, 6, &hookMachine_LoadStateFinished);
+        writeCall(0x0041ff92, 5, &RefreshScreen_TimerProcess);
     }
     
     if (sConfig.noLoadSlowdown)
@@ -413,6 +414,11 @@ void __stdcall HookManager::hookCloseCpu(DWORD* ExitCode)
         DispatchMessage(&msg);
     }
     waitThread.join();
+}
+
+BOOL __cdecl HookManager::RefreshScreen_TimerProcess(DWORD* FrameRate)
+{
+    return PJ64::Globals::FPSTimer()->process(nullptr);
 }
 
 static bool tryNamePJ64() noexcept

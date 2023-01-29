@@ -17,4 +17,5 @@ private:
     static LRESULT WINAPI hookMachine_LoadStateFinished(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
     static void hookStartRecompiledCpuRomOpen();
     static void __stdcall hookCloseCpu(DWORD* ExitCode);
+    static BOOL __cdecl RefreshScreen_TimerProcess(DWORD* FrameRate);
 };

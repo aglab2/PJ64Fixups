@@ -8,6 +8,7 @@ struct Timer
 {
 public:
 	void reset();
+	BOOL process(DWORD* FrameRate);
 
 private:
 	DWORD frames_, lastTime_;
