@@ -2,15 +2,17 @@
 
 #include "timer.h"
 
-#include <vector>
+// #define DEBUG_ENABLE_TIMER_TRACING
 
+#ifdef DEBUG_ENABLE_TIMER_TRACING
+#include <vector>
 #include <Shlobj.h>
 #include <Shlobj_core.h>
 #include <shlwapi.h>
+#endif
 
 namespace PJ64
 {
-#define FRAMES_TO_RECORD 200
 	struct RecordedFrame
 	{
 		double calculatedTime;
@@ -20,15 +22,11 @@ namespace PJ64
 		bool reset;
 	};
 
+#ifdef DEBUG_ENABLE_TIMER_TRACING
+#define FRAMES_TO_RECORD 200
+
 	std::vector<RecordedFrame> sRecordedFrames;
 	int sFramesLeftToRecord = 0;
-
-	void Timer::reset()
-	{
-		frames_ = -2;
-		lastTime_ = timeGetTime();
-		sFramesLeftToRecord = FRAMES_TO_RECORD;
-	}
 
 	static const char* getRecordsPath()
 	{
@@ -41,6 +39,17 @@ namespace PJ64
 			PathAppend(path, "records.txt");
 		}
 		return path;
+	}
+
+#endif
+
+	void Timer::reset()
+	{
+		frames_ = -2;
+#ifdef DEBUG_ENABLE_TIMER_TRACING
+		lastTime_ = timeGetTime();
+		sFramesLeftToRecord = FRAMES_TO_RECORD;
+#endif
 	}
 
 	BOOL Timer::process(DWORD* FrameRate)
@@ -79,6 +88,8 @@ namespace PJ64
 
 		bool reset = CurrentTime - lastTime_ >= 1000;
 		record.reset = reset;
+
+#ifdef DEBUG_ENABLE_TIMER_TRACING
 		if (sFramesLeftToRecord)
 		{
 			sRecordedFrames.push_back(record);
@@ -97,6 +108,7 @@ namespace PJ64
 			}
 			sRecordedFrames.clear();
 		}
+#endif
 
 		if (reset) {
 			/* Output FPS */
