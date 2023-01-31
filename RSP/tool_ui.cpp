@@ -26,64 +26,25 @@ namespace UI
 		Window() : hwnd_(GetActiveWindow())
 		{
 			initOnce();
-
-			auto window = uiNewWindow("Fixups", 200, 200, 0, hwnd_);
-			uiWindowSetMargined(window, true);
-			uiWindowSetResizeable(window, false);
-			// uiWindowsControlSetParentHWND(uiWindowsControl(window), hwnd_);
 			EnableWindow(hwnd_, FALSE);
-
-			auto main = uiNewHorizontalBox();
-			uiBoxSetPadded(main, 1);
-			uiWindowSetChild(window, uiControl(main));
-
-			{
-				auto group = uiNewGroup("General");
-				auto box = uiNewVerticalBox();
-				uiGroupSetChild(group, uiControl(box));
-				auto label = uiNewLabel("[!] Restart PJ64 after changing configs [!]");
-				uiBoxAppend(box, uiControl(label), false);
-
-#define CONFIG(name, desc) addCheckbox(box, name##_ = uiNewCheckbox(desc), &sConfig.name);
-#include "xconfig.h"
-#undef CONFIG
-
-				auto openOrig = uiNewButton("Open original RSP configs");
-				uiBoxAppend(box, uiControl(openOrig), false);
-
-				uiBoxAppend(main, uiControl(group), false);
-			}
-#if 0
-			{
-				auto group = uiNewGroup("Shortcuts");
-				auto grid = uiNewGrid();
-				uiGroupSetChild(group, uiControl(grid));
-
-				int counter = 0;
-#define HOTKEY(name, desc) addHotKey(counter, grid, desc);
-#include "xhotkeys.h"
-#undef HOTKEY
-
-				uiBoxAppend(main, uiControl(group), false);
-			}
-#endif
-			uiWindowOnClosing(window, onClosing, NULL);
-			uiControlShow(uiControl(window));
 		}
 
-		~Window()
+		virtual ~Window()
 		{
 			EnableWindow(hwnd_, TRUE);
 			SetActiveWindow(hwnd_);
 		}
 
-	private:
+	protected:
 		HWND hwnd_;
 
-#define CONFIG(name, desc) uiCheckbox* name##_;
-#include "xconfig.h"
-#undef CONFIG
+		void show(uiWindow* window)
+		{
+			uiWindowOnClosing(window, onClosing, NULL);
+			uiControlShow(uiControl(window));
+		}
 
+	private:
 		static void initOnce()
 		{
 			static bool init = false;
@@ -103,6 +64,80 @@ namespace UI
 			uiQuit();
 			return 1;
 		}
+	};
+
+	class InputWindow : public Window
+	{
+	public:
+		InputWindow()
+		{
+			auto window = uiNewWindow("Input", 20, 20, 0, hwnd_);
+			uiWindowSetMargined(window, true);
+			uiWindowSetResizeable(window, false);
+
+			auto main = uiNewHorizontalBox();
+			uiBoxSetPadded(main, 1);
+			uiWindowSetChild(window, uiControl(main));
+
+			auto label = uiNewLabel("Press key to record...\nPress Space Key to erase\nClose window to ignore\n");
+			uiBoxAppend(main, uiControl(label), false);
+
+			show(window);
+		}
+	};
+
+	class MainWindow : public Window
+	{
+	public:
+		MainWindow()
+		{
+			auto window = uiNewWindow("PJ64 Fixups", 200, 200, 0, hwnd_);
+			uiWindowSetMargined(window, true);
+			uiWindowSetResizeable(window, false);
+
+			auto main = uiNewHorizontalBox();
+			uiBoxSetPadded(main, 1);
+			uiWindowSetChild(window, uiControl(main));
+
+			{
+				auto group = uiNewGroup("General");
+				auto box = uiNewVerticalBox();
+				uiGroupSetChild(group, uiControl(box));
+				auto label = uiNewLabel("[!] Restart PJ64 after changing configs [!]");
+				uiBoxAppend(box, uiControl(label), false);
+
+#define CONFIG(name, desc) addCheckbox(box, name##_ = uiNewCheckbox(desc), &sConfig.name);
+#include "xconfig.h"
+#undef CONFIG
+
+				auto openOrig = uiNewButton("Open original RSP configs");
+				uiButtonOnClicked(openOrig, [](auto button, auto data) { ((MainWindow*)data)->openOriginalRSPConfig(); }, this);
+				uiBoxAppend(box, uiControl(openOrig), false);
+
+				uiBoxAppend(main, uiControl(group), false);
+			}
+#if 0
+			{
+				auto group = uiNewGroup("Shortcuts");
+				auto grid = uiNewGrid();
+				uiGroupSetChild(group, uiControl(grid));
+
+				int counter = 0;
+#define HOTKEY(name, desc) addHotKey(counter, grid, desc);
+#include "xhotkeys.h"
+#undef HOTKEY
+
+				uiBoxAppend(main, uiControl(group), false);
+			}
+#endif
+
+			show(window);
+		}
+
+	private:
+#define CONFIG(name, desc) uiCheckbox* name##_;
+#include "xconfig.h"
+#undef CONFIG
 
 		void addCheckbox(uiBox* b, uiCheckbox* cb, bool* modifying)
 		{
@@ -119,14 +154,22 @@ namespace UI
 			uiGridAppend(grid, uiControl(uiNewButton("UWU")), 2, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
 			uiGridAppend(grid, uiControl(uiNewButton("PEKA")), 3, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
 		}
+
+		void openOriginalRSPConfig()
+		{
+#if 0
+			InputWindow wnd;
+			uiMain();
+#endif
+		}
 	};
 
-	static std::unique_ptr<Window> Dialog;
+	static std::unique_ptr<MainWindow> Dialog;
 	void show()
 	{
 		if (!Dialog)
 		{
-			Dialog = std::make_unique<Window>();
+			Dialog = std::make_unique<MainWindow>();
 			uiMain(); // blocks till window is closed
 			Dialog.reset();
 			sConfig.save();

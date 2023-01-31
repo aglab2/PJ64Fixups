@@ -1,15 +1,12 @@
 #include <Windows.h>
 
-#include "hooks.h"
-#include "pj64_globals.h"
-#include "tool_ui.h"
-#include "Rsp #1.1.h"
 #include "rsp.h"
+#include "tool_ui.h"
 
-#include <filesystem>
+#include <utility>
 
 extern HINSTANCE hInstance;
-static HMODULE gRSP = nullptr;
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -20,14 +17,14 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_ATTACH:
         // Just in case
         hInstance = hModule;
-        gRSP = nullptr;
+        RSP::gLib = nullptr;
         break;
     case DLL_THREAD_ATTACH:
         break;
     case DLL_THREAD_DETACH:
         break;
     case DLL_PROCESS_DETACH:
-        if (auto rsp = std::exchange(gRSP, nullptr))
+        if (auto rsp = std::exchange(RSP::gLib, nullptr))
         {
             FreeLibrary(rsp);
         }
@@ -36,124 +33,16 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-typedef void (CALL *CloseDLLFn)(void);
-typedef void (CALL *DllAboutFn)(HWND hParent);
-typedef void (CALL *DllConfigFn)(HWND hParent);
-typedef void (CALL *DllTestFn)(HWND hParent);
-typedef DWORD(CALL *DoRspCyclesFn)(DWORD Cycles);
-typedef void (CALL *GetDllInfoFn)(PLUGIN_INFO* PluginInfo);
-typedef void (CALL *GetRspDebugInfoFn)(RSPDEBUG_INFO* RSPDebugInfo);
-typedef void (CALL *InitiateRSPFn)(RSP_INFO Rsp_Info, DWORD* CycleCount);
-typedef void (CALL *InitiateRSPDebuggerFn)(DEBUG_INFO DebugInfo);
-typedef void (CALL *RomClosedFn)(void);
+#define LOAD_RSP() if (!RSP::gLib) { RSP::load(); }
 
-#define FN(x) static x##Fn g##x = nullptr;
-#include "xmacro.h"
-#undef FN
-
-static inline BOOL ValidPluginVersion(PLUGIN_INFO* PluginInfo)
-{
-    switch (PluginInfo->Type) {
-    case PLUGIN_TYPE_RSP:
-        if (PluginInfo->Version == 0x0001) { return TRUE; }
-        if (PluginInfo->Version == 0x0100) { return TRUE; }
-        if (PluginInfo->Version == 0x0101) { return TRUE; }
-        break;
-    case PLUGIN_TYPE_GFX:
-        if (PluginInfo->Version == 0x0102) { return TRUE; }
-        if (PluginInfo->Version == 0x0103) { return TRUE; }
-        break;
-    case PLUGIN_TYPE_AUDIO:
-        if (PluginInfo->Version == 0x0101) { return TRUE; }
-        break;
-    case PLUGIN_TYPE_CONTROLLER:
-        if (PluginInfo->Version == 0x0100) { return TRUE; }
-        break;
-    }
-    return FALSE;
-}
-
-static BOOL setupRSP()
-{
-    PLUGIN_INFO PluginInfo;
-    gGetDllInfo = (GetDllInfoFn) GetProcAddress(gRSP, "GetDllInfo");
-    if (!gGetDllInfo) { return FALSE; }
-    gGetDllInfo(&PluginInfo);
-
-    if (!ValidPluginVersion(&PluginInfo) || PluginInfo.MemoryBswaped == FALSE) { return FALSE; }
-    PJ64::Globals::RSPVersion() = PluginInfo.Version;
-    if (PJ64::Globals::RSPVersion() == 1) { PJ64::Globals::RSPVersion() = 0x0100; }
-
-    PJ64::Globals::DoRspCycles() = GetProcAddress(gRSP, "DoRspCycles");
-    if (PJ64::Globals::DoRspCycles() == NULL) { return FALSE; }
-    PJ64::Globals::InitiateRSP_1_0() = NULL;
-    PJ64::Globals::InitiateRSP_1_1() = NULL;
-    if (PJ64::Globals::RSPVersion() == 0x100) {
-        PJ64::Globals::InitiateRSP_1_0() = GetProcAddress(gRSP, "InitiateRSP");
-        if (PJ64::Globals::InitiateRSP_1_0() == NULL) { return FALSE; }
-    }
-    if (PJ64::Globals::RSPVersion() == 0x101) {
-        PJ64::Globals::InitiateRSP_1_1() = GetProcAddress(gRSP, "InitiateRSP");
-        if (PJ64::Globals::InitiateRSP_1_1() == NULL) { return FALSE; }
-    }
-    PJ64::Globals::RSPRomClosed() = (RomClosedFn) GetProcAddress(gRSP, "RomClosed");
-    if (PJ64::Globals::RSPRomClosed() == NULL) { return FALSE; }
-    PJ64::Globals::RSPCloseDLL() = GetProcAddress(gRSP, "CloseDLL");
-    if (PJ64::Globals::RSPCloseDLL() == NULL) { return FALSE; }
-    PJ64::Globals::GetRspDebugInfo() = GetProcAddress(gRSP, "GetRspDebugInfo");
-    PJ64::Globals::InitiateRSPDebugger() = GetProcAddress(gRSP, "InitiateRSPDebugger");
-    gDllConfig = (DllConfigFn) GetProcAddress(gRSP, "DllConfig");
-    PJ64::Globals::RSPDllConfig() = DllConfig;
-
-    return TRUE;
-}
-
-static void loadRSP()
-{
-    char path[MAX_PATH];
-    HMODULE hm = NULL;
-
-    if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)&loadRSP, &hm) == 0)
-    {
-        return;
-    }
-    if (GetModuleFileName(hm, path, sizeof(path)) == 0)
-    {
-        return;
-    }
-
-    // Load original RSP
-    gRSP = LoadLibrary(RSP::unpack());
-
-    bool ok = plantHooks();
-    if (ok)
-    {
-        // Retain ourselves, forever and ever
-        LoadLibrary(path);
-        ok = setupRSP();
-    }
-
-    if (ok)
-    {
-        zapRSPInit();
-    }
-    else
-    {
-#define FN(x) g##x = (x##Fn)GetProcAddress(gRSP, #x);
-#include "xmacro.h"
-#undef FN
-    }
-}
-
-#define LOAD_RSP() if (!gRSP) { loadRSP(); }
-
-EXPORT void CALL CloseDLL(void) { LOAD_RSP(); gCloseDLL(); }
-EXPORT void CALL DllAbout(HWND hParent) { LOAD_RSP(); gDllAbout(hParent); }
+// These functions are really only necessary for a fallback, usually only 'GetDllInfo' is called
+EXPORT void CALL CloseDLL(void) { LOAD_RSP(); RSP::gCloseDLL(); }
+EXPORT void CALL DllAbout(HWND hParent) { LOAD_RSP(); RSP::gDllAbout(hParent); }
 EXPORT void CALL DllConfig(HWND hParent) { LOAD_RSP(); UI::show(); /* gDllConfig(hParent); */ }
-EXPORT void CALL DllTest(HWND hParent) { LOAD_RSP(); gDllTest(hParent); }
-EXPORT DWORD CALL DoRspCycles(DWORD Cycles) { LOAD_RSP(); return gDoRspCycles(Cycles); }
-EXPORT void CALL GetDllInfo(PLUGIN_INFO* PluginInfo) { LOAD_RSP(); gGetDllInfo(PluginInfo); }
-EXPORT void CALL GetRspDebugInfo(RSPDEBUG_INFO* RSPDebugInfo) { LOAD_RSP(); gGetRspDebugInfo(RSPDebugInfo); }
-EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, DWORD* CycleCount) { LOAD_RSP(); gInitiateRSP(Rsp_Info, CycleCount); }
-EXPORT void CALL InitiateRSPDebugger(DEBUG_INFO DebugInfo) { LOAD_RSP(); gInitiateRSPDebugger(DebugInfo); }
-EXPORT void CALL RomClosed(void) { LOAD_RSP(); gRomClosed(); }
+EXPORT void CALL DllTest(HWND hParent) { LOAD_RSP(); RSP::gDllTest(hParent); }
+EXPORT DWORD CALL DoRspCycles(DWORD Cycles) { LOAD_RSP(); return RSP::gDoRspCycles(Cycles); }
+EXPORT void CALL GetDllInfo(PLUGIN_INFO* PluginInfo) { LOAD_RSP(); RSP::gGetDllInfo(PluginInfo); }
+EXPORT void CALL GetRspDebugInfo(RSPDEBUG_INFO* RSPDebugInfo) { LOAD_RSP(); RSP::gGetRspDebugInfo(RSPDebugInfo); }
+EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, DWORD* CycleCount) { LOAD_RSP(); RSP::gInitiateRSP(Rsp_Info, CycleCount); }
+EXPORT void CALL InitiateRSPDebugger(DEBUG_INFO DebugInfo) { LOAD_RSP(); RSP::gInitiateRSPDebugger(DebugInfo); }
+EXPORT void CALL RomClosed(void) { LOAD_RSP(); RSP::gRomClosed(); }
