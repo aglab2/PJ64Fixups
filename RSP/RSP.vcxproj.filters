@@ -48,6 +48,9 @@
     <ClCompile Include="rsp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="hotkey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Rsp #1.1.h">
@@ -99,6 +102,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="xhotkeys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hotkey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xvirtkey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,8 +4,11 @@
 #include <ui_windows.h>
 
 #include "config.h"
+#include "hotkey.h"
+#include "rsp.h"
 
 #include <stdlib.h>
+#include <string>
 #include <memory>
 
 #if defined _M_IX86
@@ -20,10 +23,13 @@
 
 namespace UI
 {
+	static const std::string DefaultLine = std::string(22, ' ');
+	static constexpr int MaxHotKeys = 3;
+
 	class Window
 	{
 	public:
-		Window() : hwnd_(GetActiveWindow())
+		Window(HWND hwnd) : hwnd_(hwnd)
 		{
 			initOnce();
 			EnableWindow(hwnd_, FALSE);
@@ -40,8 +46,13 @@ namespace UI
 
 		void show(uiWindow* window)
 		{
-			uiWindowOnClosing(window, onClosing, NULL);
+			uiWindowOnClosing(window, [](uiWindow* w, void* data) { ((Window*) data)->onClosing(); return 1; }, this);
 			uiControlShow(uiControl(window));
+		}
+
+		virtual void onClosing()
+		{
+			uiQuit();
 		}
 
 	private:
@@ -58,46 +69,63 @@ namespace UI
 				init = true;
 			}
 		}
-
-		static int onClosing(uiWindow* w, void* data)
-		{
-			uiQuit();
-			return 1;
-		}
 	};
 
 	class InputWindow : public Window
 	{
 	public:
-		InputWindow()
+		InputWindow(HWND hwnd, uiButton* button)
+			: Window(hwnd)
+			, button_(button)
 		{
-			auto window = uiNewWindow("Input", 20, 20, 0, hwnd_);
-			uiWindowSetMargined(window, true);
-			uiWindowSetResizeable(window, false);
+			window_ = uiNewWindow("Input", 20, 20, 0, hwnd_);
+			uiWindowSetMargined(window_, true);
+			uiWindowSetResizeable(window_, false);
 
 			auto main = uiNewHorizontalBox();
 			uiBoxSetPadded(main, 1);
-			uiWindowSetChild(window, uiControl(main));
+			uiWindowSetChild(window_, uiControl(main));
+			uiWindowSetKeyEvents(window_
+		        			  , [](auto self, auto wparam, auto lparam) { return ((InputWindow*)self)->WM_KeyDown(wparam, lparam); }
+							  , [](auto self, auto wparam, auto lparam) { return ((InputWindow*)self)->WM_KeyUp(wparam, lparam); }
+							  , this);
 
 			auto label = uiNewLabel("Press key to record...\nPress Space Key to erase\nClose window to ignore\n");
 			uiBoxAppend(main, uiControl(label), false);
 
-			show(window);
+			show(window_);
 		}
+
+		void WM_KeyDown(WPARAM wParam, LPARAM lParam)
+		{
+			if (HotKey::virtualCodeAllowed(wParam))
+			{
+				uiWindowClose(window_);
+			}
+		}
+
+		void WM_KeyUp(WPARAM wParam, LPARAM lParam)
+		{
+
+		}
+
+	private:
+		uiButton* button_;
+		uiWindow* window_;
 	};
 
 	class MainWindow : public Window
 	{
 	public:
-		MainWindow()
+		explicit MainWindow(HWND hParent) : Window(hParent)
 		{
-			auto window = uiNewWindow("PJ64 Fixups", 200, 200, 0, hwnd_);
-			uiWindowSetMargined(window, true);
-			uiWindowSetResizeable(window, false);
+			window_ = uiNewWindow("PJ64 Fixups", 200, 200, 0, hwnd_);
+			uiWindowSetMargined(window_, true);
+			uiWindowSetResizeable(window_, false);
 
 			auto main = uiNewHorizontalBox();
 			uiBoxSetPadded(main, 1);
-			uiWindowSetChild(window, uiControl(main));
+			uiWindowSetChild(window_, uiControl(main));
 
 			{
 				auto group = uiNewGroup("General");
@@ -106,7 +134,7 @@ namespace UI
 				auto label = uiNewLabel("[!] Restart PJ64 after changing configs [!]");
 				uiBoxAppend(box, uiControl(label), false);
 
-#define CONFIG(name, desc) addCheckbox(box, name##_ = uiNewCheckbox(desc), &sConfig.name);
+#define CONFIG(name, desc) addCheckbox(box, name##_ = uiNewCheckbox(desc), &Config::get().name);
 #include "xconfig.h"
 #undef CONFIG
 
@@ -116,28 +144,43 @@ namespace UI
 
 				uiBoxAppend(main, uiControl(group), false);
 			}
-#if 0
 			{
-				auto group = uiNewGroup("Shortcuts");
+				auto group = uiNewGroup("General shortcuts");
 				auto grid = uiNewGrid();
 				uiGroupSetChild(group, uiControl(grid));
 
 				int counter = 0;
-#define HOTKEY(name, desc) addHotKey(counter, grid, desc);
+#define HOTKEY(row, name, desc) if (0 == row) addHotKey(counter, name##_, grid, desc, Config::get().name);
 #include "xhotkeys.h"
 #undef HOTKEY
 
 				uiBoxAppend(main, uiControl(group), false);
 			}
-#endif
+			{
+				auto group = uiNewGroup("Savestate shortcuts");
+				auto grid = uiNewGrid();
+				uiGroupSetChild(group, uiControl(grid));
 
-			show(window);
+				int counter = 0;
+#define HOTKEY(row, name, desc) if (1 == row) addHotKey(counter, name##_, grid, desc, Config::get().name);
+#include "xhotkeys.h"
+#undef HOTKEY
+
+				uiBoxAppend(main, uiControl(group), false);
+			}
+
+			show(window_);
 		}
 
 	private:
+		uiWindow* window_;
 #define CONFIG(name, desc) uiCheckbox* name##_;
 #include "xconfig.h"
 #undef CONFIG
+
+#define HOTKEY(row, name, desc) uiButton* name##_[MaxHotKeys];
+#include "xhotkeys.h"
+#undef HOTKEY
 
 		void addCheckbox(uiBox* b, uiCheckbox* cb, bool* modifying)
 		{
@@ -146,33 +189,64 @@ namespace UI
 			uiCheckboxSetChecked(cb, *modifying);
 		}
 
-		void addHotKey(int& counter, uiGrid* grid, const char* desc)
+		uiButton* makeHotKeyButton(const char* text)
+		{
+			auto button = uiNewButton(text);
+			uiButtonOnClicked(button, [](auto button, auto self) { ((MainWindow*)self)->openButtonConfig(button); }, this);
+			return button;
+		}
+
+		void addHotKey(int& counter, uiButton** buttons, uiGrid* grid, const char* desc, const std::vector<HotKey>& keys)
 		{
 			int val = counter++;
 			uiGridAppend(grid, uiControl(uiNewLabel(desc)), 0, val, 1, 1, 0, uiAlignStart, 0, uiAlignCenter);
-			uiGridAppend(grid, uiControl(uiNewButton("XD")), 1, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
-			uiGridAppend(grid, uiControl(uiNewButton("UWU")), 2, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
-			uiGridAppend(grid, uiControl(uiNewButton("PEKA")), 3, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
+			for (int i = 0; i < MaxHotKeys; i++)
+			{
+				std::string text = i < keys.size() ? keys[i].encode() : DefaultLine;
+				uiGridAppend(grid, uiControl(buttons[i] = makeHotKeyButton(text.c_str())), 1 + i, val, 1, 1, 1, uiAlignFill, 0, uiAlignFill);
+			}
 		}
 
 		void openOriginalRSPConfig()
 		{
-#if 0
-			InputWindow wnd;
+			RSP::gDllConfig(uiWindowGetHWND(window_));
+		}
+
+		void openButtonConfig(uiButton* button)
+		{
+			InputWindow wnd(uiWindowGetHWND(window_), button);
 			uiMain();
-#endif
+		}
+
+		virtual void onClosing() override
+		{
+#define HOTKEY(row, name, desc) Config::get().name = createHotKeyConfig(name##_);
+#include "xhotkeys.h"
+#undef HOTKEY
+
+			Config::get().save();
+			Window::onClosing();
+		}
+
+		std::vector<HotKey> createHotKeyConfig(uiButton** buttons)
+		{
+			std::vector<HotKey> keys;
+			for (int i = 0; i < MaxHotKeys; i++)
+			{
+				auto button = buttons[i];
+				std::string_view buttonText = uiButtonText(button);
+				if (buttonText != DefaultLine)
+					keys.push_back(HotKey::decode(buttonText));
+			}
+
+			return keys;
 		}
 	};
 
 	static std::unique_ptr<MainWindow> Dialog;
-	void show()
+	void show(HWND hParent)
 	{
-		if (!Dialog)
-		{
-			Dialog = std::make_unique<MainWindow>();
-			uiMain(); // blocks till window is closed
-			Dialog.reset();
-			sConfig.save();
-		}
+		auto wnd = std::make_unique<MainWindow>(hParent);
+		uiMain(); // blocks till window is closed
 	}
 }

@@ -257,6 +257,7 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="hooks.cpp" />
+    <ClCompile Include="hotkey.cpp" />
     <ClCompile Include="memunz.cpp" />
     <ClCompile Include="minizip.cpp" />
     <ClCompile Include="reset_recognizer.cpp" />
@@ -270,6 +271,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="hooks.h" />
     <ClInclude Include="hooks_priv.h" />
+    <ClInclude Include="hotkey.h" />
     <ClInclude Include="memunz.h" />
     <ClInclude Include="minizip.h" />
     <ClInclude Include="pj64_globals.h" />
@@ -283,6 +285,7 @@
     <ClInclude Include="xconfig.h" />
     <ClInclude Include="xhotkeys.h" />
     <ClInclude Include="xmacro.h" />
+    <ClInclude Include="xvirtkey.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="RSP.dat" />

@@ -127,7 +127,7 @@ void HookManager::init()
     >>>
     0041DD61  cmp         dword ptr ds:[4D81A4h],edi
     */
-    if (sConfig.fastResets)
+    if (Config::get().fastResets)
     {
         writeCall(0x0041DD35, 0x0041DD5F + 2 - 0x0041DD35, &hookCloseCpuRomClosed);
     }
@@ -159,18 +159,18 @@ void HookManager::init()
     0041F33C  je          0041F340
     0041F33E  call        eax
     */
-    if (sConfig.fastStates)
+    if (Config::get().fastStates)
     {
         writeCall(0x0041F2FE, 0x0041F33E - 0x0041F2FE + 2, &hookMachine_LoadStateRomReinit);
     }
 
-    if (sConfig.fixLoadStateStutter)
+    if (Config::get().fixLoadStateStutter)
     {
         writeCall(0x0041F4F3, 6, &hookMachine_LoadStateFinished);
         writeCall(0x0041ff92, 5, &RefreshScreen_TimerProcess);
     }
     
-    if (sConfig.noLoadSlowdown)
+    if (Config::get().noLoadSlowdown)
     {
     /*
     OpenChosenFile
@@ -264,7 +264,7 @@ void HookManager::init()
     0041DCCE  mov         ecx,dword ptr ds:[4D6A24h]
     */
     // Remove dumb sleep
-    if (sConfig.fixSlowResets)
+    if (Config::get().fixSlowResets)
     {
         UnprotectedMemoryScope scope{ (void*)0x0041DC80, 0x0041DC96 - 0x0041DC80 };
         uint8_t code[] = { 0x8D, 0x4C, 0x24, 0x10, 0x51 };
@@ -293,7 +293,7 @@ void HookManager::init()
     00432EDB  rep stos    dword ptr es:[edi]
     */
     // Only handling recompiler case here, don't care about other crap
-    if (sConfig.fastResets)
+    if (Config::get().fastResets)
     {
         writeCall(0x00432EB4, 0x00432ECA - 0x00432EB4, &hookStartRecompiledCpuRomOpen);
     }
@@ -317,7 +317,7 @@ void HookManager::init()
     // 0044A5DD  call        0041B7B0 - unzCloseCurrentFile
     // 0044A5E3  call        0041A520 - unzClose
     // 0044A578  call        0041AF30 - unzGoToNextFile
-    if (sConfig.useFastDecompression)
+    if (Config::get().useFastDecompression)
     {
         writeJump(0x00419FB0, 5, unzDispatchOpen);
         writeJump(0x0041AEE0, 5, unzDispatchGoToFirstFile);
@@ -329,7 +329,7 @@ void HookManager::init()
         writeJump(0x0041A520, 5, unzDispatchClose);
         writeJump(0x0041AF30, 5, unzDispatchGoToNextFile);
     }
-    else if (sConfig.useFastDecompression)
+    else if (Config::get().useFastDecompression)
     {
         writeJump(0x00419FB0, 5, unzOpen);
         writeJump(0x0041AEE0, 5, unzGoToFirstFile);
@@ -344,11 +344,13 @@ void HookManager::init()
 
     // CF1 by default
     // 004492FA C7 05 E0 75 4D 00 02 00 00 00 mov         dword ptr ds:[4D75E0h],2 
-    if (sConfig.cf1ByDefault)
+    if (Config::get().cf1ByDefault)
     {
         UnprotectedMemoryScope scope{ (void*)0x449300, 1 };
         *(uint8_t*)0x449300 = 1;
     }
+
+    // 0040FCBE 8B 35 F8 71 46 00    mov         esi,dword ptr ds:[4671F8h]  TranslateAccelerator
 }
 
 #define INVOKE_PJ64_PLUGIN_CALLBACK(name) if (auto fn = PJ64::Globals::name()) { fn(); }

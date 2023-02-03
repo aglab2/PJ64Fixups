@@ -38,7 +38,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 // These functions are really only necessary for a fallback, usually only 'GetDllInfo' is called
 EXPORT void CALL CloseDLL(void) { LOAD_RSP(); RSP::gCloseDLL(); }
 EXPORT void CALL DllAbout(HWND hParent) { LOAD_RSP(); RSP::gDllAbout(hParent); }
-EXPORT void CALL DllConfig(HWND hParent) { LOAD_RSP(); UI::show(); /* gDllConfig(hParent); */ }
+EXPORT void CALL DllConfig(HWND hParent) { LOAD_RSP(); UI::show(hParent); /* gDllConfig(hParent); */ }
 EXPORT void CALL DllTest(HWND hParent) { LOAD_RSP(); RSP::gDllTest(hParent); }
 EXPORT DWORD CALL DoRspCycles(DWORD Cycles) { LOAD_RSP(); return RSP::gDoRspCycles(Cycles); }
 EXPORT void CALL GetDllInfo(PLUGIN_INFO* PluginInfo) { LOAD_RSP(); RSP::gGetDllInfo(PluginInfo); }

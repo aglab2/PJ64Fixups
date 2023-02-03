@@ -1,6 +1,8 @@
 #pragma once
 
+#include <windows.h>
+
 namespace UI
 {
-	void show();
+	void show(HWND hParent);
 }
