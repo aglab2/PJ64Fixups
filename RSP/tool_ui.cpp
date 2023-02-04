@@ -87,7 +87,7 @@ namespace UI
 			uiWindowSetChild(window_, uiControl(main));
 			uiWindowSetKeyEvents(window_
 		        			  , [](auto self, auto wparam, auto lparam) { return ((InputWindow*)self)->WM_KeyDown(wparam, lparam); }
-							  , [](auto self, auto wparam, auto lparam) { return ((InputWindow*)self)->WM_KeyUp(wparam, lparam); }
+							  , nullptr
 							  , this);
 
 			auto label = uiNewLabel("Press key to record...\nPress Space Key to erase\nClose window to ignore\n");
@@ -100,13 +100,21 @@ namespace UI
 		{
 			if (HotKey::virtualCodeAllowed(wParam))
 			{
+				if (VK_SPACE == wParam)
+				{
+					uiButtonSetText(button_, DefaultLine.c_str());
+				}
+				else
+				{
+					bool ctrl = !!(GetKeyState(VK_LCONTROL) & 0x8000);
+					bool shift = !!(GetKeyState(VK_LSHIFT) & 0x8000);
+					bool alt = !!(GetKeyState(VK_LMENU) & 0x8000);
+					HotKey hk{ (ctrl ? HK_MODIFIED_CTRL : 0) | (alt ? HK_MODIFIED_ALT : 0) | (shift ? HK_MODIFIED_SHIFT : 0), wParam };
+					uiButtonSetText(button_, hk.encode().c_str());
+				}
+
 				uiWindowClose(window_);
 			}
-		}
-
-		void WM_KeyUp(WPARAM wParam, LPARAM lParam)
-		{
-
 		}
 
 	private:
