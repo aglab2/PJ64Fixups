@@ -138,6 +138,15 @@ HotKey HotKey::decode(std::string_view sv)
 	return hotkey;
 }
 
+ACCEL HotKey::toAccel(WORD cmd) const
+{
+	ACCEL accel;
+	accel.fVirt = FNOINVERT | FVIRTKEY | mods_;
+	accel.key = code_;
+	accel.cmd = cmd;
+	return accel;
+}
+
 namespace YAML
 {
 	Node convert<HotKey>::encode(const HotKey& k)

@@ -64,9 +64,11 @@ try
 #include "xconfig.h"
 #undef CONFIG
 
-#define HOTKEY(row, name, desc) name = config[#name].as<std::vector<HotKey>>();
+#define HOTKEY(row, view, name, cmd, desc) name = config[#name].as<std::vector<HotKey>>();
 #include "xhotkeys.h"
 #undef HOTKEY
+
+	compileAccel();
 }
 catch (...)
 {
@@ -80,7 +82,7 @@ void Config::save()
 #include "xconfig.h"
 #undef CONFIG
 
-#define HOTKEY(row, name, desc) config[#name] = name;
+#define HOTKEY(row, view, name, cmd, desc) config[#name] = name;
 #include "xhotkeys.h"
 #undef HOTKEY
 
@@ -93,11 +95,70 @@ void Config::save()
 		_write(fd, emitter.c_str(), emitter.size());
 		_close(fd);
 	}
+
+	compileAccel();
 }
 
 Config& Config::get()
 {
 	static Config cfg;
 	return cfg;
+}
+
+void Config::compileAccel()
+{
+	// TODO: Use x-macro
+	if (accelRomBrowser) DestroyAcceleratorTable(accelRomBrowser);
+	if (accelCPURunning) DestroyAcceleratorTable(accelCPURunning);
+	if (accelWinMode) DestroyAcceleratorTable(accelWinMode);
+
+	accelRomBrowser = NULL;
+	accelCPURunning = NULL;
+	accelWinMode = NULL;
+
+	std::vector<ACCEL> romBrowserAccels;
+	romBrowserAccels.reserve(30);
+	std::vector<ACCEL> cpuRunningAccels;
+	cpuRunningAccels.reserve(30);
+	std::vector<ACCEL> winModeAccels;
+	winModeAccels.reserve(30);
+
+	const auto compileHotkeys = [&](int flags, const std::vector<HotKey>& keys, int cmd)
+	{
+		if (flags & HKV_ROM_BROWSER) 
+		{
+			for (const auto& key : keys)
+			{
+				romBrowserAccels.push_back(key.toAccel(cmd));
+			}
+		}
+		if (flags & HKV_CPU_RUNNING)
+		{
+			for (const auto& key : keys)
+			{
+				cpuRunningAccels.push_back(key.toAccel(cmd));
+			}
+		}
+		if (flags & HKV_WINDOW_MODE)
+		{
+			for (const auto& key : keys)
+			{
+				winModeAccels.push_back(key.toAccel(cmd));
+			}
+		}
+	};
+
+#define HOTKEY(row, view, name, cmd, desc) compileHotkeys(view, name, cmd);
+#include "xhotkeys.h"
+#undef HOTKEY
+
+	if (!romBrowserAccels.empty())
+		accelRomBrowser = CreateAcceleratorTable(romBrowserAccels.data(), romBrowserAccels.size());
+	
+	if (!cpuRunningAccels.empty())
+		accelCPURunning = CreateAcceleratorTable(cpuRunningAccels.data(), cpuRunningAccels.size());
+
+	if (!winModeAccels.empty())
+		accelWinMode = CreateAcceleratorTable(winModeAccels.data(), winModeAccels.size());
 }
 

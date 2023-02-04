@@ -350,7 +350,39 @@ void HookManager::init()
         *(uint8_t*)0x449300 = 1;
     }
 
-    // 0040FCBE 8B 35 F8 71 46 00    mov         esi,dword ptr ds:[4671F8h]  TranslateAccelerator
+    // main runloop
+    // 0040FCD0 A1 10 76 4D 00       mov         eax, dword ptr ds : [004D7610h]
+    // 0040FCD5 85 C0                test        eax, eax
+    // 0040FCD7 75 1F                jne         0040FCF8
+    // 0040FCD9 8B 54 24 28          mov         edx, dword ptr[esp + 28h]
+    // 0040FCDD A1 50 7F 4D 00       mov         eax, dword ptr ds : [004D7F50h]
+    // 0040FCE2 8D 4C 24 54          lea         ecx, [esp + 54h]
+    // 0040FCE6 51                   push        ecx
+    // ...
+    // 0040FD4E 51                   push        ecx  
+    // 0040FD4F FF D3                call        ebx
+    // 0040FD51 6A 00                push        0
+    // 0040FD53 6A 00                push        0
+    // 0040FD55 6A 00                push        0
+    // 0040FD57 8D 54 24 60          lea         edx, [esp + 60h]
+    // 0040FD5B 52                   push        edx
+    // 0040FD5C FF D5                call        ebp
+    // 0040FD5E 85 C0                test        eax, eax
+    // 0040FD60 0F 85 6A FF FF FF    jne         0040FCD0
+
+    // I want [esp + 54h] which is &msg to be passed as first param for convenience sake
+    if (Config::get().overrideHotKeys)
+    {
+        uint8_t* ptr = (uint8_t*) 0x0040FCD0;
+        size_t sz = 0x0040FD60 - 0x0040FCD0 + 6;
+        UnprotectedMemoryScope scope{ ptr, sz };
+        ptr[0] = 0x8D; // lea         ecx, [esp + 54h]
+        ptr[1] = 0x4C;
+        ptr[2] = 0x24;
+        ptr[3] = 0x54;
+        ptr[4] = 0x51; // push        ecx
+        writeCall((uintptr_t) (ptr + 5), sz - 5, &HookManager::WinMain_RunLoopHook);
+    }
 }
 
 #define INVOKE_PJ64_PLUGIN_CALLBACK(name) if (auto fn = PJ64::Globals::name()) { fn(); }
@@ -421,6 +453,34 @@ void __stdcall HookManager::hookCloseCpu(DWORD* ExitCode)
 BOOL __cdecl HookManager::RefreshScreen_TimerProcess(DWORD* FrameRate)
 {
     return PJ64::Globals::FPSTimer()->process(nullptr);
+}
+
+void __stdcall HookManager::WinMain_RunLoopHook(LPMSG msg)
+{
+    auto mainWindow = PJ64::Globals::MainWindow();
+    const auto& cfg = Config::get();
+    do
+    {
+        if (!PJ64::Globals::CPURunning() && cfg.accelRomBrowser && TranslateAccelerator(mainWindow, cfg.accelRomBrowser, msg)) 
+        { 
+            continue;
+        }
+        if (PJ64::Globals::CPURunning())
+        {
+            if (cfg.accelCPURunning && TranslateAccelerator(mainWindow, cfg.accelCPURunning, msg)) 
+            { 
+                continue;
+            }
+
+            if (!PJ64::Globals::InFullScreen() && cfg.accelWinMode && TranslateAccelerator(mainWindow, cfg.accelWinMode, msg)) 
+            { 
+                continue;
+            }
+        }
+        if (IsDialogMessage(PJ64::Globals::ManageWindow(), msg)) { continue; }
+        TranslateMessage(msg);
+        DispatchMessage(msg);
+    } while (GetMessage(msg, NULL, 0, 0));
 }
 
 static bool tryNamePJ64() noexcept

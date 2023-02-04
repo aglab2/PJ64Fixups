@@ -9,7 +9,6 @@ class Config
 public:
 	Config() { load(); }
 
-	void load();
 	void save();
 
 	static Config& get();
@@ -18,7 +17,15 @@ public:
 #include "xconfig.h"
 #undef CONFIG
 
-#define HOTKEY(row, name, desc) std::vector<HotKey> name;
+#define HOTKEY(row, view, name, cmd, desc) std::vector<HotKey> name;
 #include "xhotkeys.h"
 #undef HOTKEY
+
+	HACCEL accelRomBrowser = NULL;
+	HACCEL accelCPURunning = NULL;
+	HACCEL accelWinMode = NULL;
+
+private:
+	void load();
+	void compileAccel();
 };

@@ -18,4 +18,5 @@ private:
     static void hookStartRecompiledCpuRomOpen();
     static void __stdcall hookCloseCpu(DWORD* ExitCode);
     static BOOL __cdecl RefreshScreen_TimerProcess(DWORD* FrameRate);
+    static void __stdcall WinMain_RunLoopHook(LPMSG);
 };

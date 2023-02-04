@@ -120,5 +120,20 @@ namespace PJ64
 		{
 			return *(GenericFn*)0x4D81CC;
 		}
+
+		static inline BOOL CPURunning()
+		{
+			return *(BOOL*)0x004D7610;
+		}
+
+		static inline BOOL InFullScreen()
+		{
+			return *(BOOL*)0x004D7600;
+		}
+
+		static inline HWND ManageWindow()
+		{
+			return *(HWND*)0x48E048;
+		}
 	}
 }

@@ -150,7 +150,7 @@ namespace UI
 				uiGroupSetChild(group, uiControl(grid));
 
 				int counter = 0;
-#define HOTKEY(row, name, desc) if (0 == row) addHotKey(counter, name##_, grid, desc, Config::get().name);
+#define HOTKEY(row, view, name, cmd, desc) if (0 == row) addHotKey(counter, name##_, grid, desc, Config::get().name);
 #include "xhotkeys.h"
 #undef HOTKEY
 
@@ -162,7 +162,7 @@ namespace UI
 				uiGroupSetChild(group, uiControl(grid));
 
 				int counter = 0;
-#define HOTKEY(row, name, desc) if (1 == row) addHotKey(counter, name##_, grid, desc, Config::get().name);
+#define HOTKEY(row, view, name, cmd, desc) if (1 == row) addHotKey(counter, name##_, grid, desc, Config::get().name);
 #include "xhotkeys.h"
 #undef HOTKEY
 
@@ -178,7 +178,7 @@ namespace UI
 #include "xconfig.h"
 #undef CONFIG
 
-#define HOTKEY(row, name, desc) uiButton* name##_[MaxHotKeys];
+#define HOTKEY(row, view, name, cmd, desc) uiButton* name##_[MaxHotKeys];
 #include "xhotkeys.h"
 #undef HOTKEY
 
@@ -220,7 +220,7 @@ namespace UI
 
 		virtual void onClosing() override
 		{
-#define HOTKEY(row, name, desc) Config::get().name = createHotKeyConfig(name##_);
+#define HOTKEY(row, view, name, cmd, desc) Config::get().name = createHotKeyConfig(name##_);
 #include "xhotkeys.h"
 #undef HOTKEY
 

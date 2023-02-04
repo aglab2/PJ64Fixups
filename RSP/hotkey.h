@@ -4,9 +4,15 @@
 
 #include <string>
 
-#define HK_MODIFIED_CTRL 1
-#define HK_MODIFIED_ALT 2
-#define HK_MODIFIED_SHIFT 4
+#include "pj64_resources.h"
+
+#define HK_MODIFIED_CTRL FCONTROL
+#define HK_MODIFIED_ALT FALT
+#define HK_MODIFIED_SHIFT FSHIFT
+
+#define HKV_WINDOW_MODE 1
+#define HKV_ROM_BROWSER 2
+#define HKV_CPU_RUNNING 4
 
 struct HotKey
 {
@@ -26,6 +32,8 @@ public:
 	bool ctrl() const { return !!(mods_ & HK_MODIFIED_CTRL); }
 	bool alt() const { return !!(mods_ & HK_MODIFIED_ALT); }
 	bool shift() const { return !!(mods_ & HK_MODIFIED_SHIFT); }
+
+	ACCEL toAccel(WORD cmd) const;
 
 private:
 	void decodeToken(std::string_view sv);

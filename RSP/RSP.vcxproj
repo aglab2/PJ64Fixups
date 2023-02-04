@@ -275,6 +275,7 @@
     <ClInclude Include="memunz.h" />
     <ClInclude Include="minizip.h" />
     <ClInclude Include="pj64_globals.h" />
+    <ClInclude Include="pj64_resources.h" />
     <ClInclude Include="reset_recognizer.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="Rsp #1.1.h" />
