@@ -11,6 +11,8 @@
 #include <shlwapi.h>
 #endif
 
+#define MS_RESET_TIME 70
+
 namespace PJ64
 {
 	struct RecordedFrame
@@ -47,7 +49,6 @@ namespace PJ64
 	{
 		frames_ = -2;
 #ifdef DEBUG_ENABLE_TIMER_TRACING
-		lastTime_ = timeGetTime();
 		sFramesLeftToRecord = FRAMES_TO_RECORD;
 #endif
 	}
@@ -76,6 +77,7 @@ namespace PJ64
 
 		/* Calculate time that should of elapsed for this frame */
 		record.calculatedTime = (CalculatedTime = (double)lastTime_ + (ratio_ * (double)frames_));
+		bool reset = CurrentTime - lastTime_ >= 1000;
 		if ((double)CurrentTime < CalculatedTime) {
 			long time = (int)(CalculatedTime - (double)CurrentTime);
 			if (time > 0) {
@@ -85,8 +87,13 @@ namespace PJ64
 			/* Refresh current time */
 			CurrentTime = timeGetTime();
 		}
+		else
+		{
+			// this is a new code - if we are falling very behind, try to reset the timer
+			long time = (int)((double)CurrentTime - CalculatedTime);
+			reset = time > MS_RESET_TIME;
+		}
 
-		bool reset = CurrentTime - lastTime_ >= 1000;
 		record.reset = reset;
 
 #ifdef DEBUG_ENABLE_TIMER_TRACING
@@ -120,5 +127,10 @@ namespace PJ64
 		}
 		else
 			return FALSE;
+	}
+
+	void Timer::adjust(DWORD amt)
+	{
+		lastTime_ += amt;
 	}
 }

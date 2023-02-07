@@ -141,5 +141,15 @@ namespace PJ64
 		{
 			return (R4300i_LW_VAddrFn)0x0042a870;
 		}
+
+		typedef BOOL(__fastcall* MachineFn)(void);
+		constexpr static inline MachineFn Machine_LoadState()
+		{
+			return (MachineFn)0x0041e680;
+		}
+		constexpr static inline MachineFn Machine_SaveState()
+		{
+			return (MachineFn)0x0041f510;
+		}
 	}
 }

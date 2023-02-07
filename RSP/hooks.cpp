@@ -165,10 +165,57 @@ void HookManager::init()
         writeCall(0x0041F2FE, 0x0041F33E - 0x0041F2FE + 2, &hookMachine_LoadStateRomReinit);
     }
 
+    /*
+    0041e2b6 ffd0            call    eax
+    0041e2b8 a114764d00      mov     eax,dword ptr [Project64+0xd7614 (004d7614)]
+    0041e2bd 6aff            push    0FFFFFFFFh
+    0041e2bf 50              push    eax
+    0041e2c0 ffd5            call    ebp
+    0041e2c2 393de4754d00    cmp     dword ptr [Project64+0xd75e4 (004d75e4)],edi
+    0041e2c8 741d            je      Project64+0x1e2e7 (0041e2e7)
+    0041e2ca 8b0d14764d00    mov     ecx,dword ptr [Project64+0xd7614 (004d7614)]
+    0041e2d0 51              push    ecx
+    0041e2d1 ffd6            call    esi
+    0041e2d3 8b15ec754d00    mov     edx,dword ptr [Project64+0xd75ec (004d75ec)]
+    0041e2d9 52              push    edx
+    0041e2da ff15b0704600    call    dword ptr [Project64+0x670b0 (004670b0)]
+    0041e2e0 be01000000      mov     esi,1
+    0041e2e5 eb1c            jmp     Project64+0x1e303 (0041e303)
+    0041e2e7 a114764d00      mov     eax,dword ptr [Project64+0xd7614 (004d7614)]
+    0041e2ec 50              push    eax
+    0041e2ed ffd6            call    esi
+    0041e2ef be01000000      mov     esi,1
+    0041e2f4 eb0d            jmp     Project64+0x1e303 (0041e303)
+    0041e2f6 8b0d14764d00    mov     ecx,dword ptr [Project64+0xd7614 (004d7614)]
+    0041e2fc 51              push    ecx
+    0041e2fd ff15b4704600    call    dword ptr [Project64+0x670b4 (004670b4)]
+    0041e303 393d98734d00    cmp     dword ptr [Project64+0xd7398 (004d7398)],edi
+    0041e309 5d              pop     ebp
+    0041e30a 893d84734d00    mov     dword ptr [Project64+0xd7384 (004d7384)],edi
+    0041e310 5b              pop     ebx
+    0041e311 741b            je      Project64+0x1e32e (0041e32e)
+    0041e313 893d98734d00    mov     dword ptr [Project64+0xd7398 (004d7398)],edi
+    >>> 0041e319 e8f2110000      call    Project64+0x1f510 (0041f510) Machine_SaveState
+    0041e31e 85c0            test    eax,eax
+    0041e320 750c            jne     Project64+0x1e32e (0041e32e)
+    0041e322 893598734d00    mov     dword ptr [Project64+0xd7398 (004d7398)],esi
+    0041e328 893584734d00    mov     dword ptr [Project64+0xd7384 (004d7384)],esi
+    0041e32e 393d9c734d00    cmp     dword ptr [Project64+0xd739c (004d739c)],edi
+    0041e334 740b            je      Project64+0x1e341 (0041e341)
+    0041e336 893d9c734d00    mov     dword ptr [Project64+0xd739c (004d739c)],edi
+    >>> 0041e33c e83f030000      call    Project64+0x1e680 (0041e680) Machine_LoadState
+    0041e341 3935a0734d00    cmp     dword ptr [Project64+0xd73a0 (004d73a0)],esi ds:002b:004d73a0=00000000
+    0041e347 7506            jne     Project64+0x1e34f (0041e34f)
+    0041e349 893584734d00    mov     dword ptr [Project64+0xd7384 (004d7384)],esi
+    0041e34f 5f              pop     edi
+    0041e350 5e              pop     esi
+    */
     if (Config::get().fixLoadStateStutter)
     {
-        writeCall(0x0041F4F3, 6, &hookMachine_LoadStateFinished);
         writeCall(0x0041ff92, 5, &RefreshScreen_TimerProcess);
+        writeCall(0x0041F4F3, 6, &hookMachine_LoadStateFinished);
+        // writeCall(0x0041e319, 5, &hookMachine_SaveState); - it is not needed
+        writeCall(0x0041e33c, 5, &hookMachine_LoadState);
     }
     
     if (Config::get().noLoadSlowdown)
@@ -468,6 +515,24 @@ LRESULT HookManager::hookMachine_LoadStateFinished(HWND hWnd, UINT Msg, WPARAM w
     return result;
 }
 
+BOOL __fastcall HookManager::hookMachine_LoadState(void)
+{
+    auto start = timeGetTime();
+    BOOL ok = PJ64::Globals::Machine_LoadState()();
+    auto end = timeGetTime();
+    PJ64::Globals::FPSTimer()->adjust(end - start);
+    return ok;
+}
+
+BOOL __fastcall HookManager::hookMachine_SaveState(void)
+{
+    auto start = timeGetTime();
+    BOOL ok = PJ64::Globals::Machine_SaveState()();
+    auto end = timeGetTime();
+    PJ64::Globals::FPSTimer()->adjust(end - start);
+    return ok;
+}
+
 void __stdcall HookManager::hookCloseCpu(DWORD* ExitCode)
 {
     auto tid = GetCurrentThreadId();
@@ -489,7 +554,7 @@ void __stdcall HookManager::hookCloseCpu(DWORD* ExitCode)
     waitThread.join();
 }
 
-BOOL __cdecl HookManager::RefreshScreen_TimerProcess(DWORD* FrameRate)
+BOOL __fastcall HookManager::RefreshScreen_TimerProcess(DWORD* FrameRate)
 {
     return PJ64::Globals::FPSTimer()->process(nullptr);
 }
