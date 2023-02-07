@@ -385,6 +385,7 @@ void HookManager::init()
         writeCall((uintptr_t) (ptr + 5), sz - 5, &HookManager::WinMain_RunLoopHook);
     }
 
+    if (Config::get().fixTEQCrash)
     {
         {
             uint8_t* ptr = (uint8_t*)0x004304ae;

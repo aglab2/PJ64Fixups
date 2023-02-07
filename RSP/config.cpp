@@ -29,6 +29,7 @@ try
 #define CONFIG(name, desc) name = true;
 #include "xconfig.h"
 #undef CONFIG
+	fixTEQCrash = false;
 
 	alwaysOnTop = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'A' } };
 	cheats	     = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'C' } };
