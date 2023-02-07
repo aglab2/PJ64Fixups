@@ -135,5 +135,11 @@ namespace PJ64
 		{
 			return *(HWND*)0x48E048;
 		}
+
+		typedef BOOL(__fastcall* R4300i_LW_VAddrFn)(DWORD VAddr, DWORD* Value);
+		constexpr static inline R4300i_LW_VAddrFn R4300i_LW_VAddr()
+		{
+			return (R4300i_LW_VAddrFn)0x0042a870;
+		}
 	}
 }

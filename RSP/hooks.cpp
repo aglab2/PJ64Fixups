@@ -4,6 +4,7 @@
 #include "backtrace.h"
 #include "config.h"
 #include "minizip.h"
+#include "opcode.h"
 #include "pj64_globals.h"
 #include "timer.h"
 #include "reset_recognizer.h"
@@ -383,6 +384,43 @@ void HookManager::init()
         ptr[4] = 0x51; // push        ecx
         writeCall((uintptr_t) (ptr + 5), sz - 5, &HookManager::WinMain_RunLoopHook);
     }
+
+    {
+        {
+            uint8_t* ptr = (uint8_t*)0x004304ae;
+            writeCall(0x004304ae, 5, &HookManager::hookR4300i_LW_VAddr);
+        }
+        {
+            uint8_t* ptr = (uint8_t*)0x004304ae;
+            writeCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddr);
+        }
+    }
+}
+
+BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
+{
+    OPCODE opcode;
+    BOOL ok = PJ64::Globals::R4300i_LW_VAddr()(VAddr, &opcode.Hex);
+    if (!ok)
+        return FALSE;
+
+    if (opcode.op == R4300i_SPECIAL)
+    {
+        if (R4300i_SPECIAL_TGE <= opcode.funct && opcode.funct <= R4300i_SPECIAL_TNE)
+        {
+            opcode.Hex = 0;
+        }
+    }
+    if (opcode.op == R4300i_REGIMM)
+    {
+        if (R4300i_REGIMM_TGEI <= opcode.rt && opcode.rt <= R4300i_REGIMM_TNEI)
+        {
+            opcode.Hex = 0;
+        }
+    }
+
+    *Value = opcode.Hex;
+    return TRUE;
 }
 
 #define INVOKE_PJ64_PLUGIN_CALLBACK(name) if (auto fn = PJ64::Globals::name()) { fn(); }

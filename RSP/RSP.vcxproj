@@ -274,6 +274,7 @@
     <ClInclude Include="hotkey.h" />
     <ClInclude Include="memunz.h" />
     <ClInclude Include="minizip.h" />
+    <ClInclude Include="opcode.h" />
     <ClInclude Include="pj64_globals.h" />
     <ClInclude Include="pj64_resources.h" />
     <ClInclude Include="reset_recognizer.h" />

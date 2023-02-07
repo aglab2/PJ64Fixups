@@ -113,6 +113,9 @@
     <ClInclude Include="pj64_resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="opcode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="RSP.dat" />

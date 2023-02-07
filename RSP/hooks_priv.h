@@ -19,4 +19,5 @@ private:
     static void __stdcall hookCloseCpu(DWORD* ExitCode);
     static BOOL __cdecl RefreshScreen_TimerProcess(DWORD* FrameRate);
     static void __stdcall WinMain_RunLoopHook(LPMSG);
+    static BOOL __fastcall hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value);
 };
