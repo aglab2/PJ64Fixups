@@ -443,6 +443,18 @@ void HookManager::init()
             writeCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddr);
         }
     }
+
+    if (Config::get().removeCICChipWarning)
+    {
+        {
+            UnprotectedMemoryScope scope{ (uint8_t*)0x445fc6, 5 };
+            fillNop((uint8_t*)0x445fc6, 5);
+        }
+        {
+            UnprotectedMemoryScope scope{ (uint8_t*)0x42082c, 5 };
+            fillNop((uint8_t*)0x42082c, 5);
+        }
+    }
 }
 
 BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
