@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include <thread>
+#include <optional>
 
 constexpr char NAME[] = "LINK's Project64";
 
@@ -128,7 +129,7 @@ void HookManager::init()
     >>>
     0041DD61  cmp         dword ptr ds:[4D81A4h],edi
     */
-    if (Config::get().fastResets)
+    if (Config::get().fastResets || Config::get().robustReset)
     {
         writeCall(0x0041DD35, 0x0041DD5F + 2 - 0x0041DD35, &hookCloseCpuRomClosed);
     }
@@ -341,7 +342,7 @@ void HookManager::init()
     00432EDB  rep stos    dword ptr es:[edi]
     */
     // Only handling recompiler case here, don't care about other crap
-    if (Config::get().fastResets)
+    if (Config::get().fastResets || Config::get().robustReset)
     {
         writeCall(0x00432EB4, 0x00432ECA - 0x00432EB4, &hookStartRecompiledCpuRomOpen);
     }
@@ -500,8 +501,32 @@ void HookManager::hookCloseCpuRomClosed()
     INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
 }
 
+static DWORD sFLS;
+static std::optional<DWORD> sRecompilerThreadId;
+void NTAPI flsHook(PVOID flsData)
+{
+    if (!sRecompilerThreadId)
+        return;
+
+    DWORD tid = *sRecompilerThreadId;
+    if (tid != GetCurrentThreadId())
+        return;
+
+    sRecompilerThreadId.reset();
+    gIsInitialized = false;
+    INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
+    INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
+    INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
+}
+
 void HookManager::hookStartRecompiledCpuRomOpen()
 {
+    sRecompilerThreadId = GetCurrentThreadId();
+    if (Config::get().robustReset)
+    {
+        FlsSetValue(sFLS, &sRecompilerThreadId);
+    }
+
     if (!gIsInitialized)
     {
         gIsInitialized = true;
@@ -641,6 +666,7 @@ bool plantHooks()
     if (ok)
     {
         gHookManager.init();
+        sFLS = FlsAlloc(flsHook);
     }
 
     return ok;

@@ -61,11 +61,11 @@ try
 	gsButton = std::vector{ HotKey{ 0, VK_F9 } };
 	auto config = YAML::LoadFile(getConfigPath());
 
-#define CONFIG(name, desc) name = config[#name].as<bool>();
+#define CONFIG(name, desc) try{ name = config[#name].as<bool>(); } catch(...) { }
 #include "xconfig.h"
 #undef CONFIG
 
-#define HOTKEY(row, view, name, cmd, desc) name = config[#name].as<std::vector<HotKey>>();
+#define HOTKEY(row, view, name, cmd, desc) try{ name = config[#name].as<std::vector<HotKey>>(); } catch(...) { }
 #include "xhotkeys.h"
 #undef HOTKEY
 
