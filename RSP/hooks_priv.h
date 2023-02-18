@@ -22,4 +22,5 @@ private:
     static BOOL __fastcall hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value);
     static BOOL __fastcall hookMachine_LoadState(void);
     static BOOL __fastcall hookMachine_SaveState(void);
+    static void WINAPI hookExitThread(DWORD dwExitCode);
 };

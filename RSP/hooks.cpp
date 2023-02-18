@@ -456,6 +456,14 @@ void HookManager::init()
             fillNop((uint8_t*)0x42082c, 5);
         }
     }
+
+#ifndef FLS_HACK
+    if (Config::get().robustReset)
+    {
+        UnprotectedMemoryScope scope{ (uint8_t*)0x467194, 4 };
+        *(void**)0x467194 = &hookExitThread;
+    }
+#endif
 }
 
 BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
@@ -489,6 +497,15 @@ BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
 static bool gIsInitialized = false;
 void HookManager::hookCloseCpuRomClosed()
 {
+    if (!gIsInitialized)
+    {
+        return;
+    }
+    else if (Config::get().robustReset)
+    {
+        abort();
+    }
+
     auto type = ResetRecognizer::recognize(ResetRecognizer::stackAddresses());
     bool fastReset = type == ResetRecognizer::Type::OPEN_ROM || type == ResetRecognizer::Type::RESET;
     if (1 != PJ64::Globals::CPU_Type() || !fastReset)
@@ -501,9 +518,8 @@ void HookManager::hookCloseCpuRomClosed()
     INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
 }
 
-static DWORD sFLS;
 static std::optional<DWORD> sRecompilerThreadId;
-void NTAPI flsHook(PVOID flsData)
+static void checkDeinit()
 {
     if (!sRecompilerThreadId)
         return;
@@ -519,13 +535,30 @@ void NTAPI flsHook(PVOID flsData)
     INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
 }
 
+#ifdef FLS_HACK
+static DWORD sFLS;
+void NTAPI flsHook(PVOID flsData)
+{
+    checkDeinit();
+}
+#else
+void WINAPI HookManager::hookExitThread(DWORD dwExitCode)
+{
+    checkDeinit();
+    return ExitThread(dwExitCode);
+}
+#endif
+
 void HookManager::hookStartRecompiledCpuRomOpen()
 {
     sRecompilerThreadId = GetCurrentThreadId();
+
+#ifdef FLS_HACK
     if (Config::get().robustReset)
     {
         FlsSetValue(sFLS, &sRecompilerThreadId);
     }
+#endif
 
     if (!gIsInitialized)
     {
@@ -666,7 +699,9 @@ bool plantHooks()
     if (ok)
     {
         gHookManager.init();
+#ifdef FLS_HACK
         sFLS = FlsAlloc(flsHook);
+#endif
     }
 
     return ok;
