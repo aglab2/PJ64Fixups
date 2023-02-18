@@ -80,7 +80,9 @@ void Config::load()
 
 void Config::save()
 {
-	YAML::Node config;
+	try
+	{
+		YAML::Node config;
 
 #define CONFIG(name, desc) config[#name] = name;
 #include "xconfig.h"
@@ -90,14 +92,18 @@ void Config::save()
 #include "xhotkeys.h"
 #undef HOTKEY
 
-	YAML::Emitter emitter;
-	emitter << config;
+		YAML::Emitter emitter;
+		emitter << config;
 
-	int fd = _open(getConfigPath(), _O_WRONLY | _O_CREAT | _O_TRUNC, 0666);
-	if (-1 != fd)
+		int fd = _open(getConfigPath(), _O_WRONLY | _O_CREAT | _O_TRUNC, 0666);
+		if (-1 != fd)
+		{
+			_write(fd, emitter.c_str(), emitter.size());
+			_close(fd);
+		}
+	}
+	catch (...)
 	{
-		_write(fd, emitter.c_str(), emitter.size());
-		_close(fd);
 	}
 
 	compileAccel();
