@@ -111,7 +111,7 @@ void HotKey::decodeToken(std::string_view tok)
 		}
 		else
 		{
-			abort();
+			throw std::logic_error("Bad token");
 		}
 	}
 }
