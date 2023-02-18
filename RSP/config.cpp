@@ -24,7 +24,6 @@ static const char* getConfigPath()
 }
 
 void Config::load()
-try
 {
 #define CONFIG(name, desc) name = true;
 #include "xconfig.h"
@@ -59,7 +58,10 @@ try
 	cpuSave = std::vector{ HotKey{ 0, VK_F5 } };
 	cpuRestore = std::vector{ HotKey{ 0, VK_F7 } };
 	gsButton = std::vector{ HotKey{ 0, VK_F9 } };
-	auto config = YAML::LoadFile(getConfigPath());
+
+	try
+	{
+		auto config = YAML::LoadFile(getConfigPath());
 
 #define CONFIG(name, desc) name = config[#name].as<bool>();
 #include "xconfig.h"
@@ -68,11 +70,12 @@ try
 #define HOTKEY(row, view, name, cmd, desc) name = config[#name].as<std::vector<HotKey>>();
 #include "xhotkeys.h"
 #undef HOTKEY
+	}
+	catch (...)
+	{
+	}
 
 	compileAccel();
-}
-catch (...)
-{
 }
 
 void Config::save()
