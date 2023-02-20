@@ -4,6 +4,7 @@
 
 #include "pj64_globals.h"
 #include "hooks.h"
+#include "minidump.h"
 #include "resource1.h"
 
 #include <io.h>
@@ -135,6 +136,7 @@ namespace RSP
 
 		if (ok)
 		{
+			setupExceptionFilters();
 			zapRSPInit();
 		}
 	}
