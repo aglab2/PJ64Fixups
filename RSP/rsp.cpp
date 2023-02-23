@@ -30,7 +30,7 @@ namespace RSP
 			SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, path);
 			PathAppend(path, "PJ64Fixups");
 			CreateDirectory(path, nullptr);
-			PathAppend(path, "RSP.dll");
+			PathAppend(path, "RSP.dat");
 		}
 		return path;
 	}
