@@ -455,6 +455,63 @@ void HookManager::init()
             fillNop((uint8_t*)0x42082c, 5);
         }
     }
+
+    if (Config::get().overclockVI)
+    {
+        // Welcome to MSVC codegen hell :)
+        /*
+			VI_INTR_TIME = (VI_V_SYNC_REG + 1) * 1500;
+            ecx = (eax + 1) * 1500
+            0041FEF7 8D 44 40 03          lea         eax,[eax+eax*2+3]  
+            0041FEFB 8D 04 80             lea         eax,[eax+eax*4]  
+            0041FEFE 8D 04 80             lea         eax,[eax+eax*4]  
+            0041FF01 8D 0C 80             lea         ecx,[eax+eax*4]  
+            0041FF04 C1 E1 02             shl         ecx,2  
+
+            lea ecx, [eax + 1]
+            imul ecx, ecx, 2200
+        */
+        {
+            static const unsigned char code[] = { 0x8D, 0x48, 0x01, 
+                                                  0x69, 0xC9, 0x98, 0x08, 0x00, 0x00 };
+            UnprotectedMemoryScope scope{ (void*)0x0041FEF7, 0x0041FF07 - 0x0041FEF7 };
+            memcpy((void*)0x41FEF7, code, sizeof(code));
+            fillNop((uint8_t*)0x41FEF7 + sizeof(code), 0x0041FF07 - 0x0041FEF7 - sizeof(code));
+        }
+
+        /*
+         	HalfLine = (Timers.Timer / 1500);
+            edx = eax / 1500
+            This is number shifting mult madness. I just used godbolt to generate a new payload in a similar "style"
+            00447ee9 b8f1197605      mov     eax, 0x057619f1
+            00447eee f7e9            imul    ecx
+            00447ef0 c1fa05          sar     edx,5
+            00447ef3 8bc2            mov     eax,edx
+            00447ef5 c1e81f          shr     eax,1Fh
+            00447ef8 03d0            add     edx,eax
+            00447efa a174524d00      mov     eax,dword ptr [Project64+0xd5274 (004d5274)] ; ViFieldNumber
+
+            Pay attention that result must be in edx so remove the last 'add' + 'shr' + 'mov' as they are the same
+            int __fastcall hell1(int num) { return num / 2200; }
+            int hell1(int) PROC                           ; hell1, COMDAT
+              00000 b8 73 07 28 77     mov     eax, 1999112051                ; 77280773H
+              00005 f7 e9        imul        ecx
+              00007 c1 fa 0a   sar         edx, 10                        ; 0000000aH
+              0000a 8b c2        mov         eax, edx
+              0000c c1 e8 1f   shr         eax, 31                        ; 0000001fH
+              0000f 03 c2        add         eax, edx
+              00011 c3                 ret     0
+            int hell1(int) ENDP                           ; hell1
+        */
+        {
+            // static const unsigned char code[] = { 0xb8, 0x73, 0x07, 0x28, 0x77, 
+            //                                       0xf7, 0xe9, 
+            //                                       0xc1, 0xfa, 0x0a };
+            UnprotectedMemoryScope scope{ (void*)0x00447ee9, 10 };
+            *(uint32_t*)0x00447eea = 0x77280773;
+            *(uint8_t*)0x00447ef2 = 10;
+        }
+    }
 }
 
 BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)

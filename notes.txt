@@ -1,0 +1,128 @@
+0041FE80 55                   push        ebp  
+0041FE81 8B EC                mov         ebp,esp  
+0041FE83 6A FF                push        0FFFFFFFFh  
+0041FE85 68 D8 73 46 00       push        4673D8h  
+0041FE8A 68 8C DC 45 00       push        45DC8Ch  
+0041FE8F 64 A1 00 00 00 00    mov         eax,dword ptr fs:[00000000h]  
+0041FE95 50                   push        eax  
+0041FE96 64 89 25 00 00 00 00 mov         dword ptr fs:[0],esp  
+0041FE9D 83 EC 7C             sub         esp,7Ch  
+0041FEA0 53                   push        ebx  
+0041FEA1 56                   push        esi  
+0041FEA2 57                   push        edi  
+0041FEA3 89 65 E8             mov         dword ptr [ebp-18h],esp  
+0041FEA6 33 DB                xor         ebx,ebx  
+0041FEA8 A1 A4 81 4D 00       mov         eax,dword ptr ds:[004D81A4h]  
+0041FEAD 3B C3                cmp         eax,ebx  
+0041FEAF 75 08                jne         0041FEB9  
+0041FEB1 39 1D DC 7F 4D 00    cmp         dword ptr ds:[4D7FDCh],ebx  
+0041FEB7 74 0F                je          0041FEC8  
+0041FEB9 B9 19 00 00 00       mov         ecx,19h  
+0041FEBE BE C0 7E 4D 00       mov         esi,4D7EC0h  
+0041FEC3 8D 7D 84             lea         edi,[ebp-7Ch]  
+0041FEC6 F3 A5                rep movs    dword ptr es:[edi],dword ptr [esi]  
+0041FEC8 3B C3                cmp         eax,ebx  
+0041FECA 74 0A                je          0041FED6  
+0041FECC B9 F8 BE 46 00       mov         ecx,46BEF8h  
+0041FED1 E8 3A 03 FF FF       call        00410210  ;;;;StartTimer
+0041FED6 A1 B4 52 4D 00       mov         eax,dword ptr ds:[004D52B4h]  
+0041FEDB 8B 40 18             mov         eax,dword ptr [eax+18h]  
+0041FEDE 39 05 28 EA 4A 00    cmp         dword ptr ds:[4AEA28h],eax  
+0041FEE4 74 29                je          0041FF0F  
+0041FEE6 3B C3                cmp         eax,ebx  
+0041FEE8 75 0D                jne         0041FEF7  
+0041FEEA B9 20 A1 07 00       mov         ecx,7A120h  
+0041FEEF 89 0D D4 BD 46 00    mov         dword ptr ds:[46BDD4h],ecx  
+0041FEF5 EB 1E                jmp         0041FF15  
+
+
+
+0041FEF7 8D 44 40 03          lea         eax,[eax+eax*2+3]  
+0041FEFB 8D 04 80             lea         eax,[eax+eax*4]  
+0041FEFE 8D 04 80             lea         eax,[eax+eax*4]  
+0041FF01 8D 0C 80             lea         ecx,[eax+eax*4]  
+0041FF04 C1 E1 02             shl         ecx,2  
+
+
+
+lea ecx, [eax + 1]
+imul ecx, ecx, 2200
+
+
+
+0041FF07 89 0D D4 BD 46 00    mov         dword ptr ds:[46BDD4h],ecx  
+0041FF0D EB 06                jmp         0041FF15  
+0041FF0F 8B 0D D4 BD 46 00    mov         ecx,dword ptr ds:[46BDD4h]  
+0041FF15 8B 15 4C 76 4D 00    mov         edx,dword ptr ds:[4D764Ch]  
+0041FF1B A1 2C 76 4D 00       mov         eax,dword ptr ds:[004D762Ch]  
+0041FF20 03 C2                add         eax,edx  
+0041FF22 03 C1                add         eax,ecx  
+0041FF24 75 0E                jne         0041FF34  
+0041FF26 89 1D 2C 76 4D 00    mov         dword ptr ds:[4D762Ch],ebx  
+0041FF2C 89 1D 40 76 4D 00    mov         dword ptr ds:[4D7640h],ebx  
+0041FF32 EB 16                jmp         0041FF4A  
+0041FF34 2B C2                sub         eax,edx  
+0041FF36 A3 2C 76 4D 00       mov         dword ptr ds:[004D762Ch],eax  
+0041FF3B C7 05 40 76 4D 00 01 00 00 00 mov         dword ptr ds:[4D7640h],1  
+0041FF45 E8 86 DB FF FF       call        0041DAD0  ;;;;;ChangeTimer
+0041FF4A 8B 0D B4 52 4D 00    mov         ecx,dword ptr ds:[4D52B4h]  
+0041FF50 F6 01 10             test        byte ptr [ecx],10h  
+0041FF53 74 13                je          0041FF68  
+0041FF55 33 D2                xor         edx,edx  
+0041FF57 39 1D 74 52 4D 00    cmp         dword ptr ds:[4D5274h],ebx  
+0041FF5D 0F 94 C2             sete        dl  
+0041FF60 89 15 74 52 4D 00    mov         dword ptr ds:[4D5274h],edx  
+0041FF66 EB 06                jmp         0041FF6E  
+0041FF68 89 1D 74 52 4D 00    mov         dword ptr ds:[4D5274h],ebx  
+0041FF6E 39 1D DC 7F 4D 00    cmp         dword ptr ds:[4D7FDCh],ebx  
+0041FF74 75 08                jne         0041FF7E  
+0041FF76 39 1D A4 81 4D 00    cmp         dword ptr ds:[4D81A4h],ebx  
+0041FF7C 74 0A                je          0041FF88  
+0041FF7E B9 04 B3 46 00       mov         ecx,46B304h  
+0041FF83 E8 88 02 FF FF       call        00410210   ;;;;StartTimer
+0041FF88 39 1D DC 81 4D 00    cmp         dword ptr ds:[4D81DCh],ebx  
+0041FF8E 74 07                je          0041FF97  
+0041FF90 33 C9                xor         ecx,ecx  
+0041FF92 E8 10 24 5F 06       call        HookManager::RefreshScreen_TimerProcess (06A123A7h)  
+0041FF97 39 1D DC 7F 4D 00    cmp         dword ptr ds:[4D7FDCh],ebx
+
+
+
+
+0x4D5274 = ViFieldNumber
+
+00447ec0 833d707f4d0002  cmp     dword ptr [Project64+0xd7f70 (004d7f70)],2 ;;;; CPU_Type
+00447ec7 750b            jne     Project64+0x47ed4 (00447ed4)
+00447ec9 c7057c524d0000000000 mov dword ptr [Project64+0xd527c (004d527c)],0 ;;;; HalfLine
+00447ed3 c3              ret
+00447ed4 8b0d4c764d00    mov     ecx,dword ptr [Project64+0xd764c (004d764c)]
+00447eda 85c9            test    ecx,ecx
+00447edc 7d0b            jge     Project64+0x47ee9 (00447ee9) ;;;; Timers.Timer
+00447ede c7057c524d0000000000 mov dword ptr [Project64+0xd527c (004d527c)],0 ;;;; HalfLine
+00447ee8 c3              ret
+00447ee9 b8f1197605      mov     eax,offset ANGLE_GLideN64!Ordinal0+0x919f1 (057619f1)
+00447eee f7e9            imul    ecx
+00447ef0 c1fa05          sar     edx,5
+00447ef3 8bc2            mov     eax,edx
+00447ef5 c1e81f          shr     eax,1Fh
+00447ef8 03d0            add     edx,eax
+00447efa a174524d00      mov     eax,dword ptr [Project64+0xd5274 (004d5274)] ;;;; ViFieldNumber
+00447eff 83e2fe          and     edx,0FFFFFFFEh
+00447f02 03d0            add     edx,eax
+00447f04 89157c524d00    mov     dword ptr [Project64+0xd527c (004d527c)],edx ;;;; HalfLine
+00447f0a c3              ret
+
+
+int __fastcall hell1(int num) {
+    return num / 2200;
+}
+
+int hell1(int) PROC                           ; hell1, COMDAT
+  00000 b8 73 07 28 77     mov     eax, 1999112051                ; 77280773H
+  00005 f7 e9        imul        ecx
+  00007 c1 fa 0a   sar         edx, 10                        ; 0000000aH
+  0000a 8b c2        mov         eax, edx
+  0000c c1 e8 1f   shr         eax, 31                        ; 0000001fH
+  0000f 03 c2        add         eax, edx
+  00011 c3                 ret     0
+int hell1(int) ENDP                           ; hell1
