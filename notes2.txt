@@ -1,0 +1,16 @@
+0045dc8c()
+ 045dc8c
+ 
+ 
+ 0x004d5280 = PROGRAM_COUNTER
+ 0x004d52e8 = *GPR
+ 0x004d53e8 = *FPR
+ 0x004d54e8 = *CP0
+ 0x004d556c = *FPCR
+ 0x004d5288 = &HI
+ 0x004d5290 = &LO
+ 0x004d5600 = RegRDRAM
+ 
+ 5280+38 = FPR
+ 
+ 0x4d52B8

@@ -136,11 +136,13 @@ namespace PJ64
 			return *(HWND*)0x48E048;
 		}
 
+#if 0
 		typedef BOOL(__fastcall* R4300i_LW_VAddrFn)(DWORD VAddr, DWORD* Value);
 		constexpr static inline R4300i_LW_VAddrFn R4300i_LW_VAddr()
 		{
 			return (R4300i_LW_VAddrFn)0x0042a870;
 		}
+#endif
 
 		typedef BOOL(__fastcall* MachineFn)(void);
 		constexpr static inline MachineFn Machine_LoadState()
@@ -150,6 +152,11 @@ namespace PJ64
 		constexpr static inline MachineFn Machine_SaveState()
 		{
 			return (MachineFn)0x0041f510;
+		}
+
+		constexpr static inline DWORD* TLB_ReadMap()
+		{
+			return *(DWORD**) 0x4D6A14;
 		}
 	}
 }

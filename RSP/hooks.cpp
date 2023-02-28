@@ -434,14 +434,8 @@ void HookManager::init()
 
     if (Config::get().fixTEQCrash)
     {
-        {
-            uint8_t* ptr = (uint8_t*)0x004304ae;
-            writeCall(0x004304ae, 5, &HookManager::hookR4300i_LW_VAddr);
-        }
-        {
-            uint8_t* ptr = (uint8_t*)0x004304ae;
-            writeCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddr);
-        }
+        writeCall(0x004304ae, 5, &HookManager::hookR4300i_LW_VAddr);
+        writeCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddr);
     }
 
     if (Config::get().removeCICChipWarning)
@@ -512,12 +506,37 @@ void HookManager::init()
             *(uint8_t*)0x00447ef2 = 10;
         }
     }
+
+    if (Config::get().cf0)
+    {
+        UnprotectedMemoryScope scope{ (void*)0x00431513, 8 };
+        // 00431513 8b4b24          mov     ecx, dword ptr[ebx + 24h]
+        // 00431516 e815582806      call    RSP!HookManager::hookR4300i_LW_VAddr(066b6d30)
+        // mov ecx, ebx + nop
+        *(uint8_t*)0x00431513 = 0x89;
+        *(uint8_t*)0x00431514 = 0xd9;
+        *(uint8_t*)0x00431515 = 0x90;
+        writeCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddrSection);
+    }
 }
+
+static inline BOOL r4300i_LW_VAddr(DWORD VAddr, DWORD* Value) 
+{
+    auto map = PJ64::Globals::TLB_ReadMap();
+    if (map[VAddr >> 12] == 0) 
+    {
+        return FALSE; 
+    }
+
+    *Value = *(DWORD*)(map[VAddr >> 12] + VAddr);
+    return TRUE;
+}
+
 
 BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
 {
     OPCODE opcode;
-    BOOL ok = PJ64::Globals::R4300i_LW_VAddr()(VAddr, &opcode.Hex);
+    BOOL ok = r4300i_LW_VAddr(VAddr, &opcode.Hex);
     if (!ok)
         return FALSE;
 
@@ -538,6 +557,23 @@ BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
 
     *Value = opcode.Hex;
     return TRUE;
+}
+
+#define BlockCycleCount			section->RegWorking.CycleCount
+#define BlockRandomModifier		section->RegWorking.RandomModifier
+#define MAX_CF0_CYCLE_COUNT 1
+
+BOOL __fastcall HookManager::hookR4300i_LW_VAddrSection(BLOCK_SECTION* section, DWORD* Value)
+{
+#if MAX_CF0_CYCLE_COUNT == 1
+    if (BlockCycleCount)
+#else
+    if (BlockCycleCount > MAX_CF0_CYCLE_COUNT)
+#endif
+    {
+        BlockCycleCount = MAX_CF0_CYCLE_COUNT;
+    }
+    return hookR4300i_LW_VAddr(section->CompilePC, Value);
 }
 
 #define INVOKE_PJ64_PLUGIN_CALLBACK(name) if (auto fn = PJ64::Globals::name()) { fn(); }

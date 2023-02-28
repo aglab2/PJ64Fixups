@@ -1,0 +1,93 @@
+004314e8 5d              pop     ebp
+004314e9 c3              ret
+004314ea 33c0            xor     eax,eax
+004314ec 8b0d40eb4a00    mov     ecx,dword ptr [Project64+0xaeb40 (004aeb40)]
+004314f2 33f6            xor     esi,esi
+004314f4 ebbe            jmp     Project64+0x314b4 (004314b4)
+004314f6 8b15306a4d00    mov     edx,dword ptr [Project64+0xd6a30 (004d6a30)]
+004314fc 89530c          mov     dword ptr [ebx+0Ch],edx
+004314ff 8b4320          mov     eax,dword ptr [ebx+20h]
+00431502 894324          mov     dword ptr [ebx+24h],eax
+00431505 8935e8754d00    mov     dword ptr [Project64+0xd75e8 (004d75e8)],esi
+0043150b 8975fc          mov     dword ptr [ebp-4],esi
+0043150e ba08764d00      mov     edx,offset Project64+0xd7608 (004d7608)
+00431513 8b4b24          mov     ecx,dword ptr [ebx+24h]
+00431516 e815582806      call    RSP!HookManager::hookR4300i_LW_VAddr (066b6d30)
+0043151b 85c0            test    eax,eax
+0043151d 751a            jne     Project64+0x31539 (00431539)
+0043151f b9d9070000      mov     ecx,7D9h
+00431524 e8d75b0200      call    Project64+0x57100 (00457100)
+00431529 50              push    eax
+0043152a e841a1fdff      call    Project64+0xb670 (0040b670)
+0043152f 83c404          add     esp,4
+00431532 56              push    esi
+00431533 ff1594714600    call    dword ptr [Project64+0x67194 (00467194)]
+00431539 c745fcffffffff  mov     dword ptr [ebp-4],0FFFFFFFFh
+00431540 833d48804d0004  cmp     dword ptr [Project64+0xd8048 (004d8048)],4
+00431547 752c            jne     Project64+0x31575 (00431575)
+00431549 a108764d00      mov     eax,dword ptr [Project64+0xd7608 (004d7608)]
+0043154e 8bc8            mov     ecx,eax
+00431550 81e10000ffff    and     ecx,0FFFF0000h
+00431556 81f900007c7c    cmp     ecx,7C7C0000h
+0043155c 7517            jne     Project64+0x31575 (00431575)
+0043155e 25ffff0000      and     eax,0FFFFh
+00431563 c1e004          shl     eax,4
+00431566 8b153ceb4a00    mov     edx,dword ptr [Project64+0xaeb3c (004aeb3c)]
+0043156c 8b441008        mov     eax,dword ptr [eax+edx+8]
+00431570 a308764d00      mov     dword ptr [Project64+0xd7608 (004d7608)],eax
+>>>> 00431575 8b0de0754d00    mov     ecx,dword ptr [Project64+0xd75e0 (004d75e0)]
+0043157b 018b90040000    add     dword ptr [ebx+490h],ecx ds:002b:03af4dc0=00000030
+00431581 ff8394040000    inc     dword ptr [ebx+494h]
+00431587 b801000000      mov     eax,1
+0043158c 89b48368040000  mov     dword ptr [ebx+eax*4+468h],esi
+00431593 40              inc     eax
+00431594 83f80a          cmp     eax,0Ah
+00431597 7cf3            jl      Project64+0x3158c (0043158c)
+00431599 a108764d00      mov     eax,dword ptr [Project64+0xd7608 (004d7608)]
+0043159e 8bc8            mov     ecx,eax
+004315a0 c1e91a          shr     ecx,1Ah
+004315a3 83f93f          cmp     ecx,3Fh
+004315a6 0f878e080000    ja      Project64+0x31e3a (00431e3a)
+004315ac ff248d481f4300  jmp     dword ptr Project64+0x31f48 (00431f48)[ecx*4]
+004315b3 83e03f          and     eax,3Fh
+004315b6 83f83f          cmp     eax,3Fh
+
+
+
+
+
+
+
+
+00431e9d f3a5            rep movs dword ptr es:[edi],dword ptr [esi]
+00431e9f 8d4804          lea     ecx,[eax+4]
+00431ea2 e809b9ffff      call    Project64+0x2d7b0 (0042d7b0)
+00431ea7 c705e8754d0009000000 mov dword ptr [Project64+0xd75e8 (004d75e8)],9
+00431eb1 33f6            xor     esi,esi
+00431eb3 a1e8754d00      mov     eax,dword ptr [Project64+0xd75e8 (004d75e8)]
+00431eb8 2bc6            sub     eax,esi
+00431eba 7435            je      Project64+0x31ef1 (00431ef1)
+00431ebc 48              dec     eax
+00431ebd 7428            je      Project64+0x31ee7 (00431ee7)
+00431ebf 83e802          sub     eax,2
+00431ec2 7536            jne     Project64+0x31efa (00431efa)
+00431ec4 c705e8754d0007000000 mov dword ptr [Project64+0xd75e8 (004d75e8)],7
+>>>> 00431ece a1e0754d00      mov     eax,dword ptr [Project64+0xd75e0 (004d75e0)]
+00431ed3 298390040000    sub     dword ptr [ebx+490h],eax ds:002b:03af4dc0=00000038
+00431ed9 ff8b94040000    dec     dword ptr [ebx+494h]
+00431edf 8b4324          mov     eax,dword ptr [ebx+24h]
+00431ee2 83c0fc          add     eax,0FFFFFFFCh
+00431ee5 eb10            jmp     Project64+0x31ef7 (00431ef7)
+00431ee7 c705e8754d0003000000 mov dword ptr [Project64+0xd75e8 (004d75e8)],3
+00431ef1 8b4324          mov     eax,dword ptr [ebx+24h]
+00431ef4 83c004          add     eax,4
+00431ef7 894324          mov     dword ptr [ebx+24h],eax
+00431efa 833de8754d0009  cmp     dword ptr [Project64+0xd75e8 (004d75e8)],9
+00431f01 0f8504f6ffff    jne     Project64+0x3150b (0043150b)
+00431f07 b801000000      mov     eax,1
+00431f0c 8b4df0          mov     ecx,dword ptr [ebp-10h]
+00431f0f 64890d00000000  mov     dword ptr fs:[0],ecx
+00431f16 5f              pop     edi
+00431f17 5e              pop     esi
+00431f18 5b              pop     ebx
+00431f19 8be5            mov     esp,ebp
