@@ -29,6 +29,8 @@ void Config::load()
 #include "xconfig.h"
 #undef CONFIG
 	fixTEQCrash = false;
+	overclockVI = false;
+	cf0 = false;
 
 	alwaysOnTop = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'A' } };
 	cheats	     = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'C' } };
