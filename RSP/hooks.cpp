@@ -587,9 +587,9 @@ void HookManager::hookCloseCpuRomClosed()
     {
         gIsInitialized = false;
         INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
-        INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
         INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
     }
+    INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
     INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
 }
 
@@ -606,7 +606,7 @@ void HookManager::hookStartRecompiledCpuRomOpen()
 void HookManager::hookMachine_LoadStateRomReinit()
 {
     // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
-    // INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
+    INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
     // INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
     INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
     // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomOpen)
