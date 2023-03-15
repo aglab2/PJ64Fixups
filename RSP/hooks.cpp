@@ -432,7 +432,7 @@ void HookManager::init()
         writeCall((uintptr_t) (ptr + 5), sz - 5, &HookManager::WinMain_RunLoopHook);
     }
 
-    if (Config::get().fixTEQCrash)
+    if (Config::get().fixRecompilerUnhandledOpCodeCrashes)
     {
         writeCall(0x004304ae, 5, &HookManager::hookR4300i_LW_VAddr);
         writeCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddr);
@@ -543,6 +543,10 @@ BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
     if (opcode.op == R4300i_SPECIAL)
     {
         if (R4300i_SPECIAL_TGE <= opcode.funct && opcode.funct <= R4300i_SPECIAL_TNE)
+        {
+            opcode.Hex = 0;
+        }
+        if (R4300i_SPECIAL_BREAK == opcode.funct)
         {
             opcode.Hex = 0;
         }

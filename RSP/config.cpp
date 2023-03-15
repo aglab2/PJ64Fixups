@@ -28,7 +28,6 @@ void Config::load()
 #define CONFIG(name, desc) name = true;
 #include "xconfig.h"
 #undef CONFIG
-	fixTEQCrash = false;
 	overclockVI = false;
 	cf0 = false;
 

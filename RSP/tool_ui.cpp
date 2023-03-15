@@ -6,6 +6,7 @@
 #include "config.h"
 #include "hotkey.h"
 #include "rsp.h"
+#include "version.h"
 
 #include <stdlib.h>
 #include <string>
@@ -127,7 +128,7 @@ namespace UI
 	public:
 		explicit MainWindow(HWND hParent) : Window(hParent)
 		{
-			window_ = uiNewWindow("PJ64 Fixups", 200, 200, 0, hwnd_);
+			window_ = uiNewWindow("PJ64 Fixups " VERSION, 200, 200, 0, hwnd_);
 			uiWindowSetMargined(window_, true);
 			uiWindowSetResizeable(window_, false);
 
