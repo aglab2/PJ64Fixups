@@ -14,6 +14,9 @@
 #define HKV_ROM_BROWSER 2
 #define HKV_CPU_RUNNING 4
 
+std::string vkToString(WPARAM vk);
+WPARAM toVk(std::string_view);
+
 struct HotKey
 {
 public:

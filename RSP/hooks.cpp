@@ -13,6 +13,8 @@
 #include <assert.h>
 #include <stdint.h>
 
+#include <Commctrl.h>
+
 #include <thread>
 
 constexpr char NAME[] = "LINK's Project64";
@@ -668,6 +670,23 @@ BOOL __fastcall HookManager::RefreshScreen_TimerProcess(DWORD* FrameRate)
     return PJ64::Globals::FPSTimer()->process(nullptr);
 }
 
+static void setCurrentSaveState(HWND hWnd, int state) {
+    HMENU hMenu = GetMenu(hWnd);
+    if (!PJ64::Globals::CPURunning()) 
+    { 
+        state = ID_CURRENTSAVE_DEFAULT;
+    }
+
+    if (0 == strlen(PJ64::Globals::RomName())) 
+    { 
+        return;
+    }
+
+    sprintf_s(PJ64::Globals::CurrentSave(), 256, "%s.pj%s", PJ64::Globals::RomName(), vkToString(state).c_str());
+    auto string = std::string("LINK's state: ") + PJ64::Globals::CurrentSave();
+    SendMessage(PJ64::Globals::StatusWin(), SB_SETTEXT, 0, (LPARAM)string.c_str());
+}
+
 void __stdcall HookManager::WinMain_RunLoopHook(LPMSG msg)
 {
     auto mainWindow = PJ64::Globals::MainWindow();
@@ -690,6 +709,16 @@ void __stdcall HookManager::WinMain_RunLoopHook(LPMSG msg)
                 continue;
             }
         }
+
+        if (Config::get().experimental_eachKeySavestateSlot && msg->message == WM_KEYDOWN)
+        {
+            if (HotKey::virtualCodeAllowed(msg->wParam) 
+             && Config::get().ignoredSavestateSlotKeys.find(msg->wParam) == Config::get().ignoredSavestateSlotKeys.end())
+            {
+                setCurrentSaveState(PJ64::Globals::MainWindow(), (int) msg->wParam);
+            }
+        }
+
         if (IsDialogMessage(PJ64::Globals::ManageWindow(), msg)) { continue; }
         TranslateMessage(msg);
         DispatchMessage(msg);

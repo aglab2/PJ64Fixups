@@ -46,7 +46,7 @@ bool HotKey::virtualCodeAllowed(WPARAM vk)
 	return AllowedSpecialKeys.find(vk) != AllowedSpecialKeys.end();
 }
 
-static std::string toString(WPARAM vk)
+std::string vkToString(WPARAM vk)
 {
 	if ('0' <= vk && vk <= '9')
 		return std::string(1, (char)vk);
@@ -61,7 +61,7 @@ static std::string toString(WPARAM vk)
 
 std::string HotKey::encode() const
 {
-	std::string name = toString(code_);
+	std::string name = vkToString(code_);
 	if (shift())
 	{
 		name = "Shift+" + name;
@@ -76,6 +76,28 @@ std::string HotKey::encode() const
 	}
 
 	return name;
+}
+
+WPARAM toVk(std::string_view tok)
+{
+	if (tok.length() == 1)
+	{
+		char vk = tok[0];
+		if (('0' <= vk && vk <= '9') || ('A' <= vk && vk <= 'Z'))
+		{
+			return vk;
+		}
+	}
+
+	auto it = NameToSpecialKey.find(tok);
+	if (it != NameToSpecialKey.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		throw std::logic_error("Bad token");
+	}
 }
 
 void HotKey::decodeToken(std::string_view tok)
@@ -94,25 +116,7 @@ void HotKey::decodeToken(std::string_view tok)
 	}
 	else
 	{
-		if (tok.length() == 1)
-		{
-			char vk = tok[0];
-			if (('0' <= vk && vk <= '9') || ('A' <= vk && vk <= 'Z'))
-			{
-				code_ = vk;
-				return;
-			}
-		}
-
-		auto it = NameToSpecialKey.find(tok);
-		if (it != NameToSpecialKey.end())
-		{
-			code_ = it->second;
-		}
-		else
-		{
-			throw std::logic_error("Bad token");
-		}
+		code_ = toVk(tok);
 	}
 }
 

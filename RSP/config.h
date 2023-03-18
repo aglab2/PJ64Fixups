@@ -21,6 +21,8 @@ public:
 #include "xhotkeys.h"
 #undef HOTKEY
 
+	std::set<WPARAM> ignoredSavestateSlotKeys;
+
 	HACCEL accelRomBrowser = NULL;
 	HACCEL accelCPURunning = NULL;
 	HACCEL accelWinMode = NULL;

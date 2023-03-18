@@ -30,6 +30,7 @@ void Config::load()
 #undef CONFIG
 	overclockVI = false;
 	cf0 = false;
+	experimental_eachKeySavestateSlot = false;
 
 	alwaysOnTop = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'A' } };
 	cheats	     = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'C' } };
@@ -64,13 +65,20 @@ void Config::load()
 	{
 		auto config = YAML::LoadFile(getConfigPath());
 
-#define CONFIG(name, desc) name = config[#name].as<bool>();
+#define CONFIG(name, desc) try{ name = config[#name].as<bool>(); } catch(...){}
 #include "xconfig.h"
 #undef CONFIG
 
-#define HOTKEY(row, view, name, cmd, desc) name = config[#name].as<std::vector<HotKey>>();
+#define HOTKEY(row, view, name, cmd, desc) try{ name = config[#name].as<std::vector<HotKey>>(); } catch(...){}
 #include "xhotkeys.h"
 #undef HOTKEY
+
+		try { 
+			for (const auto& key : config["ignoredSavestateSlotKeys"].as<std::vector<std::string>>())
+			{
+				ignoredSavestateSlotKeys.insert(::toVk(key));
+			}
+		} catch (...) {}
 	}
 	catch (...)
 	{
@@ -92,6 +100,13 @@ void Config::save()
 #define HOTKEY(row, view, name, cmd, desc) config[#name] = name;
 #include "xhotkeys.h"
 #undef HOTKEY
+
+		std::vector<std::string> keys;
+		for (auto key : ignoredSavestateSlotKeys)
+		{
+			keys.push_back(::vkToString(key));
+		}
+		config["ignoredSavestateSlotKeys"] = std::move(keys);
 
 		YAML::Emitter emitter;
 		emitter << config;

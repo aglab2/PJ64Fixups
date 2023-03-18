@@ -11,3 +11,4 @@ CONFIG(fixRecompilerUnhandledOpCodeCrashes, "Fix recompiler 'Unhandled OpCode' (
 CONFIG(removeCICChipWarning, "Remove CIC Chip errors")
 CONFIG(overclockVI, "Overclock VI")
 CONFIG(cf0, "Counter Factor 'Zero'")
+CONFIG(experimental_eachKeySavestateSlot, "Each key is savestate slot")
