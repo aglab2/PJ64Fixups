@@ -158,5 +158,11 @@ namespace PJ64
 		{
 			return *(DWORD**) 0x4D6A14;
 		}
+
+		typedef void(__cdecl* DacreateChanged)(int);
+		constexpr static inline DacreateChanged AiDacreateChanged()
+		{
+			return *(DacreateChanged*)(0x4D8040);
+		}
 	}
 }

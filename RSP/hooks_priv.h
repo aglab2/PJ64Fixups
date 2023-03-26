@@ -84,15 +84,19 @@ private:
 		JUMP_INFO   Cont;
 	} BLOCK_SECTION;
 
-    static void __fastcall hookCloseCpuRomClosed();
-    static void __fastcall hookMachine_LoadStateRomReinit();
+	// These functions do not really calls but they call __cdecl symbols
+    static void __cdecl hookCloseCpuRomClosed();
+    static void __cdecl hookMachine_LoadStateRomReinit();
+	static void __cdecl hookStartRecompiledCpuRomOpen();
+	static void __cdecl hookAiDacrateChanged(int systemType);
+
     static LRESULT WINAPI hookMachine_LoadStateFinished(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-    static void __fastcall hookStartRecompiledCpuRomOpen();
     static void WINAPI hookCloseCpu(DWORD* ExitCode);
     static BOOL __fastcall RefreshScreen_TimerProcess(DWORD* FrameRate);
     static void __stdcall WinMain_RunLoopHook(LPMSG);
     static BOOL __fastcall hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value);
     static BOOL __fastcall hookR4300i_LW_VAddrSection(BLOCK_SECTION* section, DWORD* Value);
+
     static BOOL __fastcall hookMachine_LoadState(void);
     static BOOL __fastcall hookMachine_SaveState(void);
 };

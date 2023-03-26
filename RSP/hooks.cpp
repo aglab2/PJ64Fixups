@@ -15,6 +15,7 @@
 
 #include <Commctrl.h>
 
+#include <mutex>
 #include <thread>
 
 constexpr char NAME[] = "LINK's Project64";
@@ -431,7 +432,7 @@ void HookManager::init()
         ptr[2] = 0x24;
         ptr[3] = 0x54;
         ptr[4] = 0x51; // push        ecx
-        writeCall((uintptr_t) (ptr + 5), sz - 5, &HookManager::WinMain_RunLoopHook);
+        doWriteCall((uintptr_t) (ptr + 5), sz - 5, &HookManager::WinMain_RunLoopHook);
     }
 
     if (Config::get().fixRecompilerUnhandledOpCodeCrashes)
@@ -518,7 +519,18 @@ void HookManager::init()
         *(uint8_t*)0x00431513 = 0x89;
         *(uint8_t*)0x00431514 = 0xd9;
         *(uint8_t*)0x00431515 = 0x90;
-        writeCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddrSection);
+        doWriteCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddrSection);
+    }
+
+    if (Config::get().fastResets || Config::get().fastStates || Config::get().fixSlowResets || Config::get().noLoadSlowdown)
+    {
+        writeCall(0x0041F355, 0x6, &HookManager::hookAiDacrateChanged);
+        {
+            UnprotectedMemoryScope scope{ (void*)0x0042B3C7, 0xf + 2 };
+            *(uint8_t*)0x0042B3C7 = 0x6a;
+            *(uint8_t*)0x0042B3C8 = 0x00;
+            doWriteCall(0x0042B3C9, 0xf, &HookManager::hookAiDacrateChanged);
+        }
     }
 }
 
@@ -585,6 +597,8 @@ BOOL __fastcall HookManager::hookR4300i_LW_VAddrSection(BLOCK_SECTION* section, 
 #define INVOKE_PJ64_PLUGIN_CALLBACK(name) if (auto fn = PJ64::Globals::name()) { fn(); }
 
 static bool gIsInitialized = false;
+static std::mutex gAudioMutex;
+
 void HookManager::hookCloseCpuRomClosed()
 {
     auto type = ResetRecognizer::recognize(ResetRecognizer::stackAddresses());
@@ -595,7 +609,10 @@ void HookManager::hookCloseCpuRomClosed()
         INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
         INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
     }
-    INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
+    {
+        std::lock_guard<std::mutex> lck(gAudioMutex);
+        INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
+    }
     INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
 }
 
@@ -609,14 +626,24 @@ void HookManager::hookStartRecompiledCpuRomOpen()
     }
 }
 
+void HookManager::hookAiDacrateChanged(int systemType)
+{
+    std::lock_guard<std::mutex> lck(gAudioMutex);
+    return PJ64::Globals::AiDacreateChanged()(systemType);
+}
+
 void HookManager::hookMachine_LoadStateRomReinit()
 {
     // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
-    INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
+    {
+        std::lock_guard<std::mutex> lck(gAudioMutex);
+        INVOKE_PJ64_PLUGIN_CALLBACK(AiRomClosed)
+    }
     // INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
     INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
     // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomOpen)
     // INVOKE_PJ64_PLUGIN_CALLBACK(ContRomOpen)
+    int a = 0;
 }
 
 LRESULT HookManager::hookMachine_LoadStateFinished(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
