@@ -37,7 +37,7 @@ public:
     {
         DWORD origFlags_;
         VirtualProtect(address_, size_, oldFlags_, &origFlags_);
-        assert(origFlags_, PAGE_EXECUTE_READWRITE);
+        // assert(origFlags_ == PAGE_EXECUTE_READWRITE);
     }
 
     UnprotectedMemoryScope(const UnprotectedMemoryScope&) = delete;
@@ -133,7 +133,7 @@ void HookManager::init()
     */
     if (Config::get().fastResets)
     {
-        writeCall(0x0041DD35, 0x0041DD5F + 2 - 0x0041DD35, &hookCloseCpuRomClosed);
+        writeCall(0x0041DD35, 0x0041DD5F + 2 - 0x0041DD35, (void*) &hookCloseCpuRomClosed);
     }
 
     /*
@@ -165,7 +165,7 @@ void HookManager::init()
     */
     if (Config::get().fastStates)
     {
-        writeCall(0x0041F2FE, 0x0041F33E - 0x0041F2FE + 2, &hookMachine_LoadStateRomReinit);
+        writeCall(0x0041F2FE, 0x0041F33E - 0x0041F2FE + 2, (void*)&hookMachine_LoadStateRomReinit);
     }
 
     /*
@@ -215,10 +215,10 @@ void HookManager::init()
     */
     if (Config::get().fixLoadStateStutter)
     {
-        writeCall(0x0041ff92, 5, &RefreshScreen_TimerProcess);
-        writeCall(0x0041F4F3, 6, &hookMachine_LoadStateFinished);
-        // writeCall(0x0041e319, 5, &hookMachine_SaveState); - it is not needed
-        writeCall(0x0041e33c, 5, &hookMachine_LoadState);
+        writeCall(0x0041ff92, 5, (void*)&RefreshScreen_TimerProcess);
+        writeCall(0x0041F4F3, 6, (void*)&hookMachine_LoadStateFinished);
+        // writeCall(0x0041e319, 5, (void*) &hookMachine_SaveState); - it is not needed
+        writeCall(0x0041e33c, 5, (void*)&hookMachine_LoadState);
     }
     
     if (Config::get().noLoadSlowdown)
@@ -320,7 +320,7 @@ void HookManager::init()
         UnprotectedMemoryScope scope{ (void*)0x0041DC80, 0x0041DC96 - 0x0041DC80 };
         uint8_t code[] = { 0x8D, 0x4C, 0x24, 0x10, 0x51 };
         memcpy((void*)0x0041DC80, code, sizeof(code));
-        doWriteCall(0x0041DC80 + sizeof(code), 0x0041DC96 - (0x0041DC80 + sizeof(code)), &hookCloseCpu);
+        doWriteCall(0x0041DC80 + sizeof(code), 0x0041DC96 - (0x0041DC80 + sizeof(code)), (void*)&hookCloseCpu);
     }
 
     /*
@@ -346,7 +346,7 @@ void HookManager::init()
     // Only handling recompiler case here, don't care about other crap
     if (Config::get().fastResets)
     {
-        writeCall(0x00432EB4, 0x00432ECA - 0x00432EB4, &hookStartRecompiledCpuRomOpen);
+        writeCall(0x00432EB4, 0x00432ECA - 0x00432EB4, (void*)&hookStartRecompiledCpuRomOpen);
     }
 
     // hook create file just for debugging
@@ -370,27 +370,27 @@ void HookManager::init()
     // 0044A578  call        0041AF30 - unzGoToNextFile
     if (Config::get().useFastDecompression)
     {
-        writeJump(0x00419FB0, 5, unzDispatchOpen);
-        writeJump(0x0041AEE0, 5, unzDispatchGoToFirstFile);
-        writeJump(0x0041A590, 5, unzDispatchGetCurrentFileInfo);
-        writeJump(0x0041AFB0, 5, unzDispatchLocateFile);
-        writeJump(0x0041B1A0, 5, unzDispatchOpenCurrentFile);
-        writeJump(0x0041B5C0, 5, unzDispatchReadCurrentFile);
-        writeJump(0x0041B7B0, 5, unzDispatchCloseCurrentFile);
-        writeJump(0x0041A520, 5, unzDispatchClose);
-        writeJump(0x0041AF30, 5, unzDispatchGoToNextFile);
+        writeJump(0x00419FB0, 5, (void*)unzDispatchOpen);
+        writeJump(0x0041AEE0, 5, (void*)unzDispatchGoToFirstFile);
+        writeJump(0x0041A590, 5, (void*)unzDispatchGetCurrentFileInfo);
+        writeJump(0x0041AFB0, 5, (void*)unzDispatchLocateFile);
+        writeJump(0x0041B1A0, 5, (void*)unzDispatchOpenCurrentFile);
+        writeJump(0x0041B5C0, 5, (void*)unzDispatchReadCurrentFile);
+        writeJump(0x0041B7B0, 5, (void*)unzDispatchCloseCurrentFile);
+        writeJump(0x0041A520, 5, (void*)unzDispatchClose);
+        writeJump(0x0041AF30, 5, (void*)unzDispatchGoToNextFile);
     }
     else if (Config::get().useFastDecompression)
     {
-        writeJump(0x00419FB0, 5, unzOpen);
-        writeJump(0x0041AEE0, 5, unzGoToFirstFile);
-        writeJump(0x0041A590, 5, unzGetCurrentFileInfo);
-        writeJump(0x0041AFB0, 5, unzLocateFile);
-        writeJump(0x0041B1A0, 5, unzOpenCurrentFile);
-        writeJump(0x0041B5C0, 5, unzReadCurrentFile);
-        writeJump(0x0041B7B0, 5, unzCloseCurrentFile);
-        writeJump(0x0041A520, 5, unzClose);
-        writeJump(0x0041AF30, 5, unzGoToNextFile);
+        writeJump(0x00419FB0, 5, (void*)unzOpen);
+        writeJump(0x0041AEE0, 5, (void*)unzGoToFirstFile);
+        writeJump(0x0041A590, 5, (void*)unzGetCurrentFileInfo);
+        writeJump(0x0041AFB0, 5, (void*)unzLocateFile);
+        writeJump(0x0041B1A0, 5, (void*)unzOpenCurrentFile);
+        writeJump(0x0041B5C0, 5, (void*)unzReadCurrentFile);
+        writeJump(0x0041B7B0, 5, (void*)unzCloseCurrentFile);
+        writeJump(0x0041A520, 5, (void*)unzClose);
+        writeJump(0x0041AF30, 5, (void*)unzGoToNextFile);
     }
 
     // CF1 by default
@@ -432,13 +432,13 @@ void HookManager::init()
         ptr[2] = 0x24;
         ptr[3] = 0x54;
         ptr[4] = 0x51; // push        ecx
-        doWriteCall((uintptr_t) (ptr + 5), sz - 5, &HookManager::WinMain_RunLoopHook);
+        doWriteCall((uintptr_t) (ptr + 5), sz - 5, (void*)&HookManager::WinMain_RunLoopHook);
     }
 
     if (Config::get().fixRecompilerUnhandledOpCodeCrashes)
     {
-        writeCall(0x004304ae, 5, &HookManager::hookR4300i_LW_VAddr);
-        writeCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddr);
+        writeCall(0x004304ae, 5, (void*)&HookManager::hookR4300i_LW_VAddr);
+        writeCall(0x00431516, 5, (void*)&HookManager::hookR4300i_LW_VAddr);
     }
 
     if (Config::get().removeCICChipWarning)
@@ -519,17 +519,17 @@ void HookManager::init()
         *(uint8_t*)0x00431513 = 0x89;
         *(uint8_t*)0x00431514 = 0xd9;
         *(uint8_t*)0x00431515 = 0x90;
-        doWriteCall(0x00431516, 5, &HookManager::hookR4300i_LW_VAddrSection);
+        doWriteCall(0x00431516, 5, (void*)&HookManager::hookR4300i_LW_VAddrSection);
     }
 
     if (Config::get().fastResets || Config::get().fastStates || Config::get().fixSlowResets || Config::get().noLoadSlowdown)
     {
-        writeCall(0x0041F355, 0x6, &HookManager::hookAiDacrateChanged);
+        writeCall(0x0041F355, 0x6, (void*)&HookManager::hookAiDacrateChanged);
         {
             UnprotectedMemoryScope scope{ (void*)0x0042B3C7, 0xf + 2 };
             *(uint8_t*)0x0042B3C7 = 0x6a;
             *(uint8_t*)0x0042B3C8 = 0x00;
-            doWriteCall(0x0042B3C9, 0xf, &HookManager::hookAiDacrateChanged);
+            doWriteCall(0x0042B3C9, 0xf, (void*)&HookManager::hookAiDacrateChanged);
         }
     }
 }
@@ -643,7 +643,6 @@ void HookManager::hookMachine_LoadStateRomReinit()
     INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
     // INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomOpen)
     // INVOKE_PJ64_PLUGIN_CALLBACK(ContRomOpen)
-    int a = 0;
 }
 
 LRESULT HookManager::hookMachine_LoadStateFinished(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -698,7 +697,6 @@ BOOL __fastcall HookManager::RefreshScreen_TimerProcess(DWORD* FrameRate)
 }
 
 static void setCurrentSaveState(HWND hWnd, int state) {
-    HMENU hMenu = GetMenu(hWnd);
     if (!PJ64::Globals::CPURunning()) 
     { 
         state = ID_CURRENTSAVE_DEFAULT;

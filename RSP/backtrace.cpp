@@ -7,6 +7,8 @@ namespace Backtrace
     constexpr int BacktraceDepth = 10;
     constexpr int ScanningDepth = 1000;
 
+    // clang is being particularly stupid about this, do not optimize
+    __attribute__((optnone))
 	Addresses collectStackAddresses()
 	{
         volatile void* stackVar{};

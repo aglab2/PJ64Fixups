@@ -83,25 +83,25 @@ namespace RSP
 		PJ64::Globals::RSPVersion() = PluginInfo.Version;
 		if (PJ64::Globals::RSPVersion() == 1) { PJ64::Globals::RSPVersion() = 0x0100; }
 
-		PJ64::Globals::DoRspCycles() = gDoRspCycles;
+		PJ64::Globals::DoRspCycles() = (void*) gDoRspCycles;
 		if (PJ64::Globals::DoRspCycles() == NULL) { return FALSE; }
 		PJ64::Globals::InitiateRSP_1_0() = NULL;
 		PJ64::Globals::InitiateRSP_1_1() = NULL;
 		if (PJ64::Globals::RSPVersion() == 0x100) {
-			PJ64::Globals::InitiateRSP_1_0() = gInitiateRSP;
+			PJ64::Globals::InitiateRSP_1_0() = (void*)gInitiateRSP;
 			if (PJ64::Globals::InitiateRSP_1_0() == NULL) { return FALSE; }
 		}
 		if (PJ64::Globals::RSPVersion() == 0x101) {
-			PJ64::Globals::InitiateRSP_1_1() = gInitiateRSP;
+			PJ64::Globals::InitiateRSP_1_1() = (void*)gInitiateRSP;
 			if (PJ64::Globals::InitiateRSP_1_1() == NULL) { return FALSE; }
 		}
 		PJ64::Globals::RSPRomClosed() = gRomClosed;
 		if (PJ64::Globals::RSPRomClosed() == NULL) { return FALSE; }
-		PJ64::Globals::RSPCloseDLL() = gCloseDLL;
+		PJ64::Globals::RSPCloseDLL() = (void*)gCloseDLL;
 		if (PJ64::Globals::RSPCloseDLL() == NULL) { return FALSE; }
-		PJ64::Globals::GetRspDebugInfo() = gGetRspDebugInfo;
-		PJ64::Globals::InitiateRSPDebugger() = gInitiateRSPDebugger;
-		PJ64::Globals::RSPDllConfig() = DllConfig;
+		PJ64::Globals::GetRspDebugInfo() = (void*)gGetRspDebugInfo;
+		PJ64::Globals::InitiateRSPDebugger() = (void*)gInitiateRSPDebugger;
+		PJ64::Globals::RSPDllConfig() = (void*)DllConfig;
 
 		return TRUE;
 	}
