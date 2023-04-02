@@ -4,5 +4,5 @@
 
 namespace UI
 {
-	void show(HWND hParent);
+	void __cdecl show(HWND hParent);
 }

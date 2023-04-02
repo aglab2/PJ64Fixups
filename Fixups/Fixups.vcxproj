@@ -32,43 +32,44 @@
     <ProjectGuid>{28060d5a-1b0f-4ae1-b0bf-94691c7a219e}</ProjectGuid>
     <RootNamespace>RSP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Fixups</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseExternal|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseExternal|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -258,14 +259,13 @@
   <ItemGroup>
     <ClCompile Include="backtrace.cpp" />
     <ClCompile Include="config.cpp" />
-    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="hooks.cpp" />
     <ClCompile Include="hotkey.cpp" />
     <ClCompile Include="memunz.cpp" />
     <ClCompile Include="minidump.cpp" />
     <ClCompile Include="minizip.cpp" />
     <ClCompile Include="reset_recognizer.cpp" />
-    <ClCompile Include="rsp.cpp" />
+    <ClCompile Include="fixups.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="tool_ui.cpp" />
     <ClCompile Include="unzdispatch.cpp" />
@@ -283,23 +283,15 @@
     <ClInclude Include="pj64_globals.h" />
     <ClInclude Include="pj64_resources.h" />
     <ClInclude Include="reset_recognizer.h" />
-    <ClInclude Include="resource1.h" />
     <ClInclude Include="Rsp #1.1.h" />
-    <ClInclude Include="rsp.h" />
+    <ClInclude Include="fixups.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="tool_ui.h" />
     <ClInclude Include="unzdispatch.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="xconfig.h" />
     <ClInclude Include="xhotkeys.h" />
-    <ClInclude Include="xmacro.h" />
     <ClInclude Include="xvirtkey.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="RSP.dat" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resources.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

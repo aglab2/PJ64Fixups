@@ -1,3 +1,5 @@
+#include "tool_ui.h"
+
 #include <ui.h>
 
 #include <windows.h>
@@ -5,7 +7,7 @@
 
 #include "config.h"
 #include "hotkey.h"
-#include "rsp.h"
+#include "Rsp #1.1.h"
 #include "version.h"
 
 #include <stdlib.h>
@@ -218,7 +220,7 @@ namespace UI
 
 		void openOriginalRSPConfig()
 		{
-			RSP::gDllConfig(uiWindowGetHWND(window_));
+			DllConfig(uiWindowGetHWND(window_));
 		}
 
 		void openButtonConfig(uiButton* button)
