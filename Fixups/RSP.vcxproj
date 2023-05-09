@@ -101,17 +101,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(SolutionDir)$(Configuration)\;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
-    <IncludePath>$(SolutionDir)\Thirdparty\yaml-cpp\include;$(SolutionDir)\Thirdparty\libui-ng;$(SolutionDir)\Thirdparty\minizip-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(SolutionDir)\Thirdparty\yaml-cpp\include;$(SolutionDir)\Thirdparty\libui-ng;$(SolutionDir)\Thirdparty\minizip-ng;$(SolutionDir)Thirdparty;$(SolutionDir)Thirdparty\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(SolutionDir)$(Configuration)\;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
-    <IncludePath>$(SolutionDir)\Thirdparty\yaml-cpp\include;$(SolutionDir)\Thirdparty\libui-ng;$(SolutionDir)\Thirdparty\minizip-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(SolutionDir)\Thirdparty\yaml-cpp\include;$(SolutionDir)\Thirdparty\libui-ng;$(SolutionDir)\Thirdparty\minizip-ng;$(SolutionDir)Thirdparty;$(SolutionDir)Thirdparty\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseExternal|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(SolutionDir)$(Configuration)\;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
-    <IncludePath>$(SolutionDir)\Thirdparty\yaml-cpp\include;$(SolutionDir)\Thirdparty\libui-ng;$(SolutionDir)\Thirdparty\minizip-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(SolutionDir)\Thirdparty\yaml-cpp\include;$(SolutionDir)\Thirdparty\libui-ng;$(SolutionDir)\Thirdparty\minizip-ng;$(SolutionDir)Thirdparty;$(SolutionDir)Thirdparty\zlib-ng;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

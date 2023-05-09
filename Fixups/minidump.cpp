@@ -15,7 +15,7 @@ static void collectMinidump(EXCEPTION_POINTERS* ex)
     exceptionInformation.ThreadId = GetCurrentThreadId();
     exceptionInformation.ExceptionPointers = ex;
     exceptionInformation.ClientPointers = TRUE;
-    MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), minidumpFile, MiniDumpNormal, &exceptionInformation, NULL, NULL);
+    MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), minidumpFile, (MINIDUMP_TYPE) (MiniDumpWithFullMemory | MiniDumpWithProcessThreadData | MiniDumpWithFullMemoryInfo | MiniDumpWithThreadInfo | MiniDumpWithPrivateReadWriteMemory), &exceptionInformation, NULL, NULL);
 
     CloseHandle(minidumpFile);
 }

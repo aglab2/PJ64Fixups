@@ -6,6 +6,7 @@
 #include "hooks.h"
 #include "minidump.h"
 #include "resource1.h"
+#include "zlib-ng.h"
 
 #include <io.h>
 #include <fcntl.h>
@@ -43,9 +44,12 @@ namespace RSP
 		{
 			auto rc = FindResource(hInstance, MAKEINTRESOURCE(IDR_RSP), RT_RCDATA);
 			auto res = LoadResource(hInstance, rc);
-			void* data = (wchar_t*)LockResource(res);
-			size_t size = SizeofResource(hInstance, rc);
-			_write(fd, data, size);
+            uint8_t *dataComp = (uint8_t*)LockResource(res);
+			size_t sizeComp = SizeofResource(hInstance, rc);
+            uint8_t *data   = (uint8_t*) malloc(0x20000);
+            size_t dataLen  = 0x20000;
+            zng_uncompress(data, &dataLen, dataComp, sizeComp);
+            _write(fd, data, dataLen);
 			_close(fd);
 		}
 
