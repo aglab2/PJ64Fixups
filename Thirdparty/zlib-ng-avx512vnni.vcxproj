@@ -18,15 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="zlib-ng\arch\x86\adler32_sse42.c" />
-    <ClCompile Include="zlib-ng\arch\x86\insert_string_sse42.c" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{f00c6ecb-ac9c-41a7-bb91-62ba3f1b6df4}</ProjectGuid>
-    <RootNamespace>zlibngsse42</RootNamespace>
+    <ProjectGuid>{2370e60b-367d-4337-83e3-bebcab8baca4}</ProjectGuid>
+    <RootNamespace>zlibngavx512vnni</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -74,31 +70,30 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(LLVMInstallDir)\lib\clang\$(LLVMToolsVersion)\include;$(IncludePath)</IncludePath>
-    <IntDir>$(ProjectDir)\$(Configuration)\zlib-ng-sse42\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(LLVMInstallDir)\lib\clang\$(LLVMToolsVersion)\include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(ProjectDir)\$(Configuration)\zlib-ng-avx512vnni\</IntDir>
     <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(LLVMInstallDir)\lib\clang\$(LLVMToolsVersion)\include;$(IncludePath)</IncludePath>
-    <IntDir>$(ProjectDir)\$(Configuration)\zlib-ng-sse42\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>$(ProjectDir)\$(Configuration)\zlib-ng-avx512vnni\</IntDir>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(LLVMInstallDir)\lib\clang\$(LLVMToolsVersion)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(LLVMInstallDir)\lib\clang\$(LLVMToolsVersion)\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir);$(ProjectDir)\zlib-ng;$(LLVMInstallDir)\lib\clang\$(LLVMToolsVersion)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CallingConvention>VectorCall</CallingConvention>
-      <AdditionalOptions>-msse4.2 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-mavx512vnni -mavx512bw -mavx512vl %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -112,14 +107,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CallingConvention>VectorCall</CallingConvention>
-      <AdditionalOptions>-msse4.2 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-mavx512vnni -mavx512bw -mavx512vl %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -133,13 +127,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CallingConvention>VectorCall</CallingConvention>
-      <AdditionalOptions>-msse4.2 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-mavx512vnni -mavx512bw -mavx512vl %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -153,14 +146,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CallingConvention>VectorCall</CallingConvention>
-      <AdditionalOptions>-msse4.2 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-mavx512vnni -mavx512bw -mavx512vl %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -170,6 +162,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="zlib-ng\arch\x86\adler32_avx512_vnni.c" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

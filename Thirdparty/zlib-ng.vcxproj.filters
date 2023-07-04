@@ -18,19 +18,28 @@
     <ClCompile Include="zlib-ng\adler32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="zlib-ng\adler32_fold.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="zlib-ng\chunkset.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zlib-ng\compare258.c">
+    <ClCompile Include="zlib-ng\compare256.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="zlib-ng\compress.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zlib-ng\crc32.c">
+    <ClCompile Include="zlib-ng\cpu_features.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zlib-ng\crc32_comb.c">
+    <ClCompile Include="zlib-ng\crc32_braid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib-ng\crc32_braid_comb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib-ng\crc32_fold.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="zlib-ng\deflate.c">
@@ -39,13 +48,22 @@
     <ClCompile Include="zlib-ng\deflate_fast.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="zlib-ng\deflate_huff.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="zlib-ng\deflate_medium.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="zlib-ng\deflate_quick.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="zlib-ng\deflate_rle.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="zlib-ng\deflate_slow.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib-ng\deflate_stored.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="zlib-ng\functable.c">
@@ -54,16 +72,10 @@
     <ClCompile Include="zlib-ng\gzlib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zlib-ng\gzread.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="zlib-ng\gzwrite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="zlib-ng\infback.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="zlib-ng\inffast.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="zlib-ng\inflate.c">
@@ -75,6 +87,12 @@
     <ClCompile Include="zlib-ng\insert_string.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="zlib-ng\insert_string_roll.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib-ng\slide_hash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="zlib-ng\trees.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -84,30 +102,45 @@
     <ClCompile Include="zlib-ng\zutil.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zlib-ng\arch\x86\chunkset_sse.c">
+    <ClCompile Include="zlib-ng\arch\x86\chunkset_sse2.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zlib-ng\arch\x86\slide_sse.c">
+    <ClCompile Include="zlib-ng\arch\x86\compare256_sse2.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zlib-ng\arch\x86\x86.c">
+    <ClCompile Include="zlib-ng\arch\x86\slide_hash_sse2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib-ng\arch\x86\x86_features.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="zlib-ng\adler32_fold.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="zlib-ng\adler32_p.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="zlib-ng\chunkset_tpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib-ng\crc32_comb_tbl.h">
+    <ClInclude Include="zlib-ng\compare256_rle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib-ng\crc32_p.h">
+    <ClInclude Include="zlib-ng\cpu_features.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib-ng\crc32_tbl.h">
+    <ClInclude Include="zlib-ng\crc32_braid_comb_p.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib-ng\crc32_braid_p.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib-ng\crc32_braid_tbl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib-ng\crc32_fold.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="zlib-ng\deflate.h">
@@ -125,7 +158,7 @@
     <ClInclude Include="zlib-ng\gzguts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib-ng\inffast.h">
+    <ClInclude Include="zlib-ng\inffast_tpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="zlib-ng\inffixed_tbl.h">
@@ -161,25 +194,16 @@
     <ClInclude Include="zlib-ng\zendian.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib-ng\zlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="zlib-ng\zlib-ng.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="zlib-ng\zutil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="zlib-ng\zutil_p.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib-ng\arch\x86\crc_folding.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="zlib-ng\arch\x86\x86.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="zconf-ng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib-ng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

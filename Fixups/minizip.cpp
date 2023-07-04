@@ -216,16 +216,18 @@ static unzFile unzOpen_MZ(void* stream) {
     int32_t err = MZ_OK;
     void* handle = NULL;
 
-    mz_zip_create(&handle);
-    err = mz_zip_open(handle, stream, MZ_OPEN_MODE_READ);
+    handle = mz_zip_create();
+    if (!handle)
+        return NULL;
 
+    err = mz_zip_open(handle, stream, MZ_OPEN_MODE_READ);
     if (err != MZ_OK) {
         mz_zip_delete(&handle);
         return NULL;
     }
 
-    compat = (mz_compat*)MZ_ALLOC(sizeof(mz_compat));
-    if (compat != NULL) {
+    compat = (mz_compat*)calloc(1, sizeof(mz_compat));
+    if (compat) {
         compat->handle = handle;
         compat->stream = stream;
 
@@ -243,9 +245,11 @@ static int unzCtor_MZ(unzFile file, void* stream) {
     int32_t err = MZ_OK;
     void* handle = NULL;
 
-    mz_zip_create(&handle);
-    err = mz_zip_open(handle, stream, MZ_OPEN_MODE_READ);
+    handle = mz_zip_create();
+    if (!handle)
+        return UNZ_PARAMERROR;
 
+    err = mz_zip_open(handle, stream, MZ_OPEN_MODE_READ);
     if (err != MZ_OK) {
         mz_zip_delete(&handle);
         return UNZ_PARAMERROR;
@@ -262,7 +266,8 @@ unzFile ZEXPORT unzOpen(const char* path) {
     unzFile unz = NULL;
     void* stream = NULL;
 
-    if (mz_stream_os_create(&stream) == NULL)
+    stream = mz_stream_os_create();
+    if (!stream)
         return NULL;
 
     if (mz_stream_open(stream, path, MZ_OPEN_MODE_READ) != MZ_OK) {
@@ -271,7 +276,7 @@ unzFile ZEXPORT unzOpen(const char* path) {
     }
 
     unz = unzOpen_MZ(stream);
-    if (unz == NULL) {
+    if (!unz) {
         mz_stream_close(stream);
         mz_stream_delete(&stream);
         return NULL;
@@ -281,9 +286,8 @@ unzFile ZEXPORT unzOpen(const char* path) {
 
 int unzCtor(unzFile file, const char* path)
 {
-    void* stream = NULL;
-
-    if (mz_stream_os_create(&stream) == NULL)
+    void* stream = mz_stream_os_create();
+    if (!stream)
         return UNZ_PARAMERROR;
 
     if (mz_stream_open(stream, path, MZ_OPEN_MODE_READ) != MZ_OK) {
@@ -306,7 +310,7 @@ int ZEXPORT unzOpenCurrentFile(unzFile file) {
     int32_t err = MZ_OK;
     void* stream = NULL;
 
-    if (compat == NULL)
+    if (!compat)
         return UNZ_PARAMERROR;
 
     compat->total_out = 0;
@@ -322,7 +326,7 @@ int ZEXPORT unzOpenCurrentFile(unzFile file) {
 
 int ZEXPORT unzGoToFirstFile(unzFile file) {
     mz_compat* compat = (mz_compat*)file;
-    if (compat == NULL)
+    if (!compat)
         return UNZ_PARAMERROR;
     compat->entry_index = 0;
     return mz_zip_goto_first_entry(compat->handle);
@@ -335,7 +339,7 @@ int ZEXPORT unzLocateFile(unzFile file, const char* filename, int case_sensitive
     int32_t err = MZ_OK;
     int32_t result = 0;
 
-    if (compat == NULL)
+    if (!compat)
         return UNZ_PARAMERROR;
 
     preserve_index = compat->entry_index;
@@ -362,7 +366,7 @@ static int unzClose_MZ(unzFile file) {
     mz_compat* compat = (mz_compat*)file;
     int32_t err = MZ_OK;
 
-    if (compat == NULL)
+    if (!compat)
         return UNZ_PARAMERROR;
 
     err = mz_zip_close(compat->handle);
@@ -375,7 +379,7 @@ int ZEXPORT unzClose(unzFile file) {
     mz_compat* compat = (mz_compat*)file;
     int32_t err = MZ_OK;
 
-    if (compat == NULL)
+    if (!compat)
         return UNZ_PARAMERROR;
 
     if (compat->handle != NULL)
@@ -386,7 +390,7 @@ int ZEXPORT unzClose(unzFile file) {
         mz_stream_delete(&compat->stream);
     }
 
-    MZ_FREE(compat);
+    free(compat);
 
     return err;
 }
@@ -394,7 +398,7 @@ int ZEXPORT unzClose(unzFile file) {
 int ZEXPORT unzReadCurrentFile(unzFile file, void* buf, unsigned len) {
     mz_compat* compat = (mz_compat*)file;
     int32_t err = MZ_OK;
-    if (compat == NULL || len >= INT32_MAX)
+    if (!compat || len >= INT32_MAX)
         return UNZ_PARAMERROR;
     err = mz_zip_entry_read(compat->handle, buf, (int32_t)len);
     if (err > 0)
@@ -405,7 +409,7 @@ int ZEXPORT unzReadCurrentFile(unzFile file, void* buf, unsigned len) {
 int ZEXPORT unzCloseCurrentFile(unzFile file) {
     mz_compat* compat = (mz_compat*)file;
     int32_t err = MZ_OK;
-    if (compat == NULL)
+    if (!compat)
         return UNZ_PARAMERROR;
     err = mz_zip_entry_close(compat->handle);
     return err;
@@ -434,14 +438,14 @@ int ZEXPORT unzGetCurrentFileInfo(unzFile file, unz_file_info* pfile_info, char*
     uint16_t bytes_to_copy = 0;
     int32_t err = MZ_OK;
 
-    if (compat == NULL)
+    if (!compat)
         return UNZ_PARAMERROR;
 
     err = mz_zip_entry_get_info(compat->handle, &file_info);
     if (err != MZ_OK)
         return err;
 
-    if (pfile_info != NULL) {
+    if (pfile_info) {
         pfile_info->version = file_info->version_madeby;
         pfile_info->version_needed = file_info->version_needed;
         pfile_info->flag = file_info->flag;
@@ -462,7 +466,7 @@ int ZEXPORT unzGetCurrentFileInfo(unzFile file, unz_file_info* pfile_info, char*
         pfile_info->compressed_size = (uint32_t)file_info->compressed_size;
         pfile_info->uncompressed_size = (uint32_t)file_info->uncompressed_size;
     }
-    if (filename_size > 0 && filename != NULL && file_info->filename != NULL) {
+    if (filename_size > 0 && filename && file_info->filename) {
         bytes_to_copy = (uint16_t)filename_size;
         if (bytes_to_copy > file_info->filename_size)
             bytes_to_copy = file_info->filename_size;
@@ -470,13 +474,13 @@ int ZEXPORT unzGetCurrentFileInfo(unzFile file, unz_file_info* pfile_info, char*
         if (bytes_to_copy < filename_size)
             filename[bytes_to_copy] = 0;
     }
-    if (extrafield_size > 0 && extrafield != NULL) {
+    if (extrafield_size > 0 && extrafield) {
         bytes_to_copy = (uint16_t)extrafield_size;
         if (bytes_to_copy > file_info->extrafield_size)
             bytes_to_copy = file_info->extrafield_size;
         memcpy(extrafield, file_info->extrafield, bytes_to_copy);
     }
-    if (comment_size > 0 && comment != NULL && file_info->comment != NULL) {
+    if (comment_size > 0 && comment && file_info->comment) {
         bytes_to_copy = (uint16_t)comment_size;
         if (bytes_to_copy > file_info->comment_size)
             bytes_to_copy = file_info->comment_size;
@@ -490,7 +494,7 @@ int ZEXPORT unzGetCurrentFileInfo(unzFile file, unz_file_info* pfile_info, char*
 int ZEXPORT unzGoToNextFile(unzFile file) {
     mz_compat* compat = (mz_compat*)file;
     int32_t err = MZ_OK;
-    if (compat == NULL)
+    if (!compat)
         return UNZ_PARAMERROR;
     err = mz_zip_goto_next_entry(compat->handle);
     if (err != MZ_END_OF_LIST)

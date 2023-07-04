@@ -28,47 +28,57 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="zlib-ng\adler32.c" />
-    <ClCompile Include="zlib-ng\arch\x86\chunkset_sse.c" />
-    <ClCompile Include="zlib-ng\arch\x86\slide_sse.c" />
-    <ClCompile Include="zlib-ng\arch\x86\x86.c" />
+    <ClCompile Include="zlib-ng\adler32_fold.c" />
+    <ClCompile Include="zlib-ng\arch\x86\chunkset_sse2.c" />
+    <ClCompile Include="zlib-ng\arch\x86\compare256_sse2.c" />
+    <ClCompile Include="zlib-ng\arch\x86\slide_hash_sse2.c" />
+    <ClCompile Include="zlib-ng\arch\x86\x86_features.c" />
     <ClCompile Include="zlib-ng\chunkset.c" />
-    <ClCompile Include="zlib-ng\compare258.c" />
+    <ClCompile Include="zlib-ng\compare256.c" />
     <ClCompile Include="zlib-ng\compress.c" />
-    <ClCompile Include="zlib-ng\crc32.c" />
-    <ClCompile Include="zlib-ng\crc32_comb.c" />
+    <ClCompile Include="zlib-ng\cpu_features.c" />
+    <ClCompile Include="zlib-ng\crc32_braid.c" />
+    <ClCompile Include="zlib-ng\crc32_braid_comb.c" />
+    <ClCompile Include="zlib-ng\crc32_fold.c" />
     <ClCompile Include="zlib-ng\deflate.c" />
     <ClCompile Include="zlib-ng\deflate_fast.c" />
+    <ClCompile Include="zlib-ng\deflate_huff.c" />
     <ClCompile Include="zlib-ng\deflate_medium.c" />
     <ClCompile Include="zlib-ng\deflate_quick.c" />
+    <ClCompile Include="zlib-ng\deflate_rle.c" />
     <ClCompile Include="zlib-ng\deflate_slow.c" />
+    <ClCompile Include="zlib-ng\deflate_stored.c" />
     <ClCompile Include="zlib-ng\functable.c" />
     <ClCompile Include="zlib-ng\gzlib.c" />
-    <ClCompile Include="zlib-ng\gzread.c" />
     <ClCompile Include="zlib-ng\gzwrite.c" />
     <ClCompile Include="zlib-ng\infback.c" />
-    <ClCompile Include="zlib-ng\inffast.c" />
     <ClCompile Include="zlib-ng\inflate.c" />
     <ClCompile Include="zlib-ng\inftrees.c" />
     <ClCompile Include="zlib-ng\insert_string.c" />
+    <ClCompile Include="zlib-ng\insert_string_roll.c" />
+    <ClCompile Include="zlib-ng\slide_hash.c" />
     <ClCompile Include="zlib-ng\trees.c" />
     <ClCompile Include="zlib-ng\uncompr.c" />
     <ClCompile Include="zlib-ng\zutil.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="zconf-ng.h" />
+    <ClInclude Include="zlib-ng.h" />
+    <ClInclude Include="zlib-ng\adler32_fold.h" />
     <ClInclude Include="zlib-ng\adler32_p.h" />
-    <ClInclude Include="zlib-ng\arch\x86\crc_folding.h" />
-    <ClInclude Include="zlib-ng\arch\x86\x86.h" />
     <ClInclude Include="zlib-ng\chunkset_tpl.h" />
-    <ClInclude Include="zlib-ng\crc32_comb_tbl.h" />
-    <ClInclude Include="zlib-ng\crc32_p.h" />
-    <ClInclude Include="zlib-ng\crc32_tbl.h" />
+    <ClInclude Include="zlib-ng\compare256_rle.h" />
+    <ClInclude Include="zlib-ng\cpu_features.h" />
+    <ClInclude Include="zlib-ng\crc32_braid_comb_p.h" />
+    <ClInclude Include="zlib-ng\crc32_braid_p.h" />
+    <ClInclude Include="zlib-ng\crc32_braid_tbl.h" />
+    <ClInclude Include="zlib-ng\crc32_fold.h" />
     <ClInclude Include="zlib-ng\deflate.h" />
     <ClInclude Include="zlib-ng\deflate_p.h" />
     <ClInclude Include="zlib-ng\fallback_builtins.h" />
     <ClInclude Include="zlib-ng\functable.h" />
     <ClInclude Include="zlib-ng\gzguts.h" />
-    <ClInclude Include="zlib-ng\inffast.h" />
+    <ClInclude Include="zlib-ng\inffast_tpl.h" />
     <ClInclude Include="zlib-ng\inffixed_tbl.h" />
     <ClInclude Include="zlib-ng\inflate.h" />
     <ClInclude Include="zlib-ng\inflate_p.h" />
@@ -80,8 +90,6 @@
     <ClInclude Include="zlib-ng\trees_tbl.h" />
     <ClInclude Include="zlib-ng\zbuild.h" />
     <ClInclude Include="zlib-ng\zendian.h" />
-    <ClInclude Include="zlib-ng\zlib-ng.h" />
-    <ClInclude Include="zlib-ng\zlib.h" />
     <ClInclude Include="zlib-ng\zutil.h" />
     <ClInclude Include="zlib-ng\zutil_p.h" />
   </ItemGroup>
@@ -188,7 +196,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;HAVE_BUILTIN_CTZ;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;X86_MASK_INTRIN;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -208,7 +216,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;HAVE_BUILTIN_CTZ;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;X86_MASK_INTRIN;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -230,7 +238,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;HAVE_BUILTIN_CTZ;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;X86_MASK_INTRIN;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -250,7 +258,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -268,7 +276,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -289,7 +297,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_AVX2;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WITH_GZFILEOP;UNALIGNED_OK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;X86_VPCLMULQDQ_CRC;X86_AVX512;X86_AVX512VNNI;WIN32;X86_AVX2_ADLER32;X86_AVX_CHUNKSET;X86_SSE42_CRC_HASH;X86_SSE42_CRC_INTRIN;X86_SSE42_CMP_STR;X86_SSE2;X86_SSE2_CHUNKSET;X86_SSE2_SLIDEHASH;X86_SSSE3;X86_SSSE3_ADLER32;X86_PCLMULQDQ_CRC;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>

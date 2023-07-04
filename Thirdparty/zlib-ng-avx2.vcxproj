@@ -19,9 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="zlib-ng\arch\x86\adler32_avx.c" />
-    <ClCompile Include="zlib-ng\arch\x86\compare258_avx.c" />
-    <ClCompile Include="zlib-ng\arch\x86\slide_avx.c" />
+    <ClCompile Include="zlib-ng\arch\x86\adler32_avx2.c" />
+    <ClCompile Include="zlib-ng\arch\x86\chunkset_avx2.c" />
+    <ClCompile Include="zlib-ng\arch\x86\compare256_avx2.c" />
+    <ClCompile Include="zlib-ng\arch\x86\slide_hash_avx2.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -93,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>HAVE_BUILTIN_CTZ;X86_AVX2;X86_AVX2_ADLER32;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_BUILTIN_CTZ;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -113,7 +114,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>HAVE_BUILTIN_CTZ;X86_AVX2;X86_AVX2_ADLER32;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_BUILTIN_CTZ;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -134,7 +135,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>HAVE_BUILTIN_CTZ;X86_AVX2;X86_AVX2_ADLER32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_BUILTIN_CTZ;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -154,7 +155,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>HAVE_BUILTIN_CTZ;X86_AVX2;X86_AVX2_ADLER32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_BUILTIN_CTZ;X86_FEATURES;X86_SSE2;X86_SSSE3;X86_SSE42;X86_SSE42_CRC_INTRIN;X86_PCLMULQDQ_CRC;X86_AVX2;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
