@@ -63,7 +63,7 @@ namespace PJ64
 		if (-1 == frames_)
 		{
 			frames_ = 0;
-			lastTime_ = timeGetTime();
+			lastTime_ = now();
 		}
 
 		RecordedFrame record{};
@@ -73,7 +73,7 @@ namespace PJ64
 
 		record.lastFrames = frames_++;
 		record.lastTime = lastTime_;
-		record.currentTime = (CurrentTime = timeGetTime());
+		record.currentTime = (CurrentTime = now());
 
 		/* Calculate time that should of elapsed for this frame */
 		record.calculatedTime = (CalculatedTime = (double)lastTime_ + (ratio_ * (double)frames_));
@@ -85,7 +85,7 @@ namespace PJ64
 			}
 
 			/* Refresh current time */
-			CurrentTime = timeGetTime();
+			CurrentTime = now();
 		}
 		else
 		{
@@ -133,4 +133,92 @@ namespace PJ64
 	{
 		lastTime_ += amt;
 	}
+}
+
+AccurateTimer::AccurateTimer()
+{
+	LARGE_INTEGER t;
+	QueryPerformanceFrequency(&t);
+	freq_ = t.QuadPart;
+	metricFrame_ = freq_ / 60;
+	metricReset_ = freq_ * 1000 / MS_RESET_TIME;
+}
+
+void AccurateTimer::setFrameRate(double hz)
+{
+	metricFrame_ = freq_ / hz;
+	// TODO: should depend on 'hz'
+	metricReset_ = freq_ * 1000 / MS_RESET_TIME;
+}
+
+void AccurateTimer::start()
+{
+	frames_ = 0;
+	lastTime_ = now();
+	if (!timer_)
+		timer_ = CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
+	
+	// Fallback to low resolution timer if unsupported by the OS
+	if (!timer_)
+		timer_ = CreateWaitableTimer(nullptr, FALSE, nullptr);
+}
+
+void AccurateTimer::reset()
+{
+	frames_ = -2;
+}
+
+BOOL AccurateTimer::process(DWORD* FrameRate)
+{
+	if (-2 == frames_)
+	{
+		frames_ = -1;
+		return FALSE;
+	}
+	if (-1 == frames_)
+	{
+		frames_ = 0;
+		lastTime_ = now();
+	}
+
+	LONGLONG CalculatedTime{};
+	LONGLONG CurrentTime;
+
+	frames_++;
+	CurrentTime = now();
+
+	/* Calculate time that should of elapsed for this frame */
+	CalculatedTime = lastTime_ + frames_ * metricFrame_;
+	bool reset = (CurrentTime - lastTime_) >= freq_;
+	LARGE_INTEGER left{};
+	left.QuadPart = CurrentTime - CalculatedTime;
+	if (left.QuadPart < 0)
+	{
+		SetWaitableTimer(timer_, &left, 0, nullptr, nullptr, false);
+		WaitForSingleObject(timer_, INFINITE);
+
+		/* Refresh current time */
+		CurrentTime = now();
+	}
+	else
+	{
+		// this is a new code - if we are falling very behind, try to reset the timer
+		reset = left.QuadPart > MS_RESET_TIME;
+	}
+
+	if (reset) {
+		/* Output FPS */
+		if (FrameRate != NULL) { *FrameRate = frames_; }
+		frames_ = 0;
+		lastTime_ = CurrentTime;
+
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
+void AccurateTimer::adjust(LONGLONG amt)
+{
+	lastTime_ += amt;
 }

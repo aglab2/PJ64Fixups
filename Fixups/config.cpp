@@ -31,6 +31,7 @@ void Config::load()
 	overclockVI = false;
 	cf0 = false;
 	experimental_eachKeySavestateSlot = false;
+	accurateTimer = false;
 
 	alwaysOnTop = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'A' } };
 	cheats	     = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'C' } };

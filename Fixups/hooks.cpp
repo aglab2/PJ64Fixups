@@ -532,6 +532,32 @@ void HookManager::init()
             doWriteCall(0x0042B3C9, 0xf, (void*)&HookManager::hookAiDacrateChanged);
         }
     }
+
+    if (Config::get().accurateTimer)
+    {
+        // 0x00419E70
+        writeCall(0x00420330, 5, (void*)&HookManager::hookTimerStart);
+        writeCall(0x004493CA, 5, (void*)&HookManager::hookTimerInitialize);
+        writeCall(0x004493DA, 5, (void*)&HookManager::hookTimerInitialize);
+        writeCall(0x0041DD0C, 5, (void*)&HookManager::hookTimerStop);
+    }
+}
+
+static AccurateTimer sAccurateTimer;
+
+void __fastcall HookManager::hookTimerInitialize(double Hertz)
+{
+    sAccurateTimer.setFrameRate(Hertz);
+}
+
+void __fastcall HookManager::hookTimerStart(void)
+{
+    sAccurateTimer.start();
+}
+
+void __fastcall HookManager::hookTimerStop(void)
+{
+    // sAccurateTimer.stop();
 }
 
 static inline BOOL r4300i_LW_VAddr(DWORD VAddr, DWORD* Value) 
@@ -648,25 +674,37 @@ void HookManager::hookMachine_LoadStateRomReinit()
 LRESULT HookManager::hookMachine_LoadStateFinished(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     LRESULT result = SendMessageA(hWnd, Msg, wParam, lParam);
-    PJ64::Globals::FPSTimer()->reset();
+    if (Config::get().accurateTimer)
+        sAccurateTimer.reset();
+    else
+        PJ64::Globals::FPSTimer()->reset();
+    
     return result;
 }
 
 BOOL __fastcall HookManager::hookMachine_LoadState(void)
 {
-    auto start = timeGetTime();
+    auto start = Config::get().accurateTimer ? AccurateTimer::now() : PJ64::Timer::now();
     BOOL ok = PJ64::Globals::Machine_LoadState()();
-    auto end = timeGetTime();
-    PJ64::Globals::FPSTimer()->adjust(end - start);
+    auto end = Config::get().accurateTimer ? AccurateTimer::now() : PJ64::Timer::now();
+    if (Config::get().accurateTimer)
+        sAccurateTimer.adjust(end - start);
+    else
+        PJ64::Globals::FPSTimer()->adjust(end - start);
+   
     return ok;
 }
 
 BOOL __fastcall HookManager::hookMachine_SaveState(void)
 {
-    auto start = timeGetTime();
+    auto start = Config::get().accurateTimer ? AccurateTimer::now() : PJ64::Timer::now();
     BOOL ok = PJ64::Globals::Machine_SaveState()();
-    auto end = timeGetTime();
-    PJ64::Globals::FPSTimer()->adjust(end - start);
+    auto end = Config::get().accurateTimer ? AccurateTimer::now() : PJ64::Timer::now();
+    if (Config::get().accurateTimer)
+        sAccurateTimer.adjust(end - start);
+    else
+        PJ64::Globals::FPSTimer()->adjust(end - start);
+
     return ok;
 }
 
@@ -693,12 +731,15 @@ void __stdcall HookManager::hookCloseCpu(DWORD* ExitCode)
 
 BOOL __fastcall HookManager::RefreshScreen_TimerProcess(DWORD* FrameRate)
 {
-    return PJ64::Globals::FPSTimer()->process(nullptr);
+    if (Config::get().accurateTimer)
+        return sAccurateTimer.process(FrameRate);
+    else
+        return PJ64::Globals::FPSTimer()->process(FrameRate);
 }
 
 static void setCurrentSaveState(HWND hWnd, int state) {
     if (!PJ64::Globals::CPURunning()) 
-    { 
+    {
         state = ID_CURRENTSAVE_DEFAULT;
     }
 

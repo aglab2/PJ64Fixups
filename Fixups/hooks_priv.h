@@ -99,4 +99,8 @@ private:
 
     static BOOL __fastcall hookMachine_LoadState(void);
     static BOOL __fastcall hookMachine_SaveState(void);
+
+	static void __fastcall hookTimerInitialize(double Hertz);
+	static void __fastcall hookTimerStart(void);
+	static void __fastcall hookTimerStop (void);
 };
