@@ -180,10 +180,10 @@ DWORD InputDelayer::getDelayedKeys()
 
 	Duration frameTime = estimateFrameTime();
 	Duration delay = std::chrono::duration_cast<Duration>(std::chrono::milliseconds(inputDelay));
-	while (delay > frameTime)
-	{
-		delay -= frameTime;
-	}
+	// we want to estimate when next controller input needs to be polled - it is likely to be polled within a 'frameTime'
+	// from now which means 'delay' should not be larger than 'frameTime'
+	// Such approach may still add jittering but CircularBuffer polling should help us out here...
+	delay %= frameTime;
 
 	expectedPollingTime_ = delay + now;
 	if (expectedPollingTime_ < expectedWakeUpTime_)
