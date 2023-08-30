@@ -54,6 +54,9 @@
     <ClCompile Include="minidump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="input_delayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Rsp #1.1.h">
@@ -123,6 +126,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="input_delayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="circular_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

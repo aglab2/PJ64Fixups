@@ -165,5 +165,11 @@ namespace PJ64
 		{
 			return *(DacreateChanged*)(0x4D8040);
 		}
+
+		typedef void(__cdecl* GetKeys)(int Control, DWORD* Keys);
+		[[maybe_unused]] static inline GetKeys ControllerGetKeysFn()
+		{
+			return *(GetKeys*)(0x4D7FA4);
+		}
 	}
 }

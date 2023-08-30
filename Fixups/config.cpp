@@ -32,6 +32,7 @@ void Config::load()
 	cf0 = false;
 	experimental_eachKeySavestateSlot = false;
 	accurateTimer = false;
+	inputDelay = 0;
 
 	alwaysOnTop = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'A' } };
 	cheats	     = std::vector{ HotKey{ HK_MODIFIED_CTRL, 'C' } };
@@ -80,6 +81,12 @@ void Config::load()
 				ignoredSavestateSlotKeys.insert(::toVk(key));
 			}
 		} catch (...) {}
+
+		try
+		{
+			inputDelay = config["inputDelay"].as<int>();
+		}
+		catch (...) { }
 	}
 	catch (...)
 	{
@@ -108,6 +115,7 @@ void Config::save()
 			keys.push_back(::vkToString(key));
 		}
 		config["ignoredSavestateSlotKeys"] = std::move(keys);
+		config["inputDelay"] = inputDelay;
 
 		YAML::Emitter emitter;
 		emitter << config;

@@ -103,4 +103,6 @@ private:
 	static void __fastcall hookTimerInitialize(double Hertz);
 	static void __fastcall hookTimerStart(void);
 	static void __fastcall hookTimerStop (void);
+
+	static void __cdecl hookGetKeys(int, DWORD*);
 };

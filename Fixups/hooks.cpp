@@ -3,6 +3,7 @@
 
 #include "backtrace.h"
 #include "config.h"
+#include "input_delayer.h"
 #include "minizip.h"
 #include "opcode.h"
 #include "pj64_globals.h"
@@ -131,7 +132,7 @@ void HookManager::init()
     >>>
     0041DD61  cmp         dword ptr ds:[4D81A4h],edi
     */
-    if (Config::get().fastResets)
+    if (Config::get().fastResets || Config::get().inputDelay)
     {
         writeCall(0x0041DD35, 0x0041DD5F + 2 - 0x0041DD35, (void*) &hookCloseCpuRomClosed);
     }
@@ -163,7 +164,7 @@ void HookManager::init()
     0041F33C  je          0041F340
     0041F33E  call        eax
     */
-    if (Config::get().fastStates)
+    if (Config::get().fastStates || Config::get().inputDelay)
     {
         writeCall(0x0041F2FE, 0x0041F33E - 0x0041F2FE + 2, (void*)&hookMachine_LoadStateRomReinit);
     }
@@ -344,7 +345,7 @@ void HookManager::init()
     00432EDB  rep stos    dword ptr es:[edi]
     */
     // Only handling recompiler case here, don't care about other crap
-    if (Config::get().fastResets)
+    if (Config::get().fastResets || Config::get().inputDelay)
     {
         writeCall(0x00432EB4, 0x00432ECA - 0x00432EB4, (void*)&hookStartRecompiledCpuRomOpen);
     }
@@ -541,6 +542,37 @@ void HookManager::init()
         writeCall(0x004493DA, 5, (void*)&HookManager::hookTimerInitialize);
         writeCall(0x0041DD0C, 5, (void*)&HookManager::hookTimerStop);
     }
+
+    if (Config::get().inputDelay)
+    {
+        UnprotectedMemoryScope scope{ (void*)0x42C7CE, 0x42C7DF - 0x42C7CE };
+        uint8_t* reg = (uint8_t*)0x42C7CE;
+        reg[0] = 0x8d;
+        reg[1] = 0x54;
+        reg[2] = 0x24;
+        reg[3] = 0x04;
+        reg[4] = 0x52;
+        reg[5] = 0x51;
+        writeCall(0x42C7CE + 6, 0x42C7DF - 0x42C7CE - 6, (void*)&HookManager::hookGetKeys);
+
+        // 0042C7CE A1 A4 7F 4D 00       mov         eax, dword ptr ds : [004D7FA4h]
+        // 0042C7D3 85 C0                test        eax, eax
+        // 0042C7D5 74 15                je          0042C7EC
+        // 0042C7D7 8D 54 24 04          lea         edx, [esp + 4]
+        // 0042C7DB 52                   push        edx
+        // 0042C7DC 51                   push        ecx
+        // 0042C7DD FF D0                call        eax
+    }
+}
+
+static InputDelayer gInputDelayer;
+
+void __cdecl HookManager::hookGetKeys(int num, DWORD* keys)
+{
+    if (Config::get().inputDelay) [[likely]]
+        *keys = gInputDelayer.getDelayedKeys();
+    else
+        PJ64::Globals::ControllerGetKeysFn()(num, keys);
 }
 
 static AccurateTimer sAccurateTimer;
@@ -634,6 +666,7 @@ void HookManager::hookCloseCpuRomClosed()
         gIsInitialized = false;
         INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
         INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
+        gInputDelayer.stop(); // nop is no input delay is needed
     }
     {
         std::lock_guard<std::mutex> lck(gAudioMutex);
@@ -649,6 +682,8 @@ void HookManager::hookStartRecompiledCpuRomOpen()
         gIsInitialized = true;
         INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomOpen)
         INVOKE_PJ64_PLUGIN_CALLBACK(ContRomOpen)
+        if (Config::get().inputDelay)
+            gInputDelayer.start();
     }
 }
 

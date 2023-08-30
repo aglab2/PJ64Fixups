@@ -27,6 +27,8 @@ public:
 	HACCEL accelCPURunning = NULL;
 	HACCEL accelWinMode = NULL;
 
+	int inputDelay = 0;
+
 private:
 	void load();
 	void compileAccel();

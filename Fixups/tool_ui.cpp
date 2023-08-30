@@ -147,6 +147,18 @@ namespace UI
 #include "xconfig.h"
 #undef CONFIG
 
+				auto inputDelayGrid = uiNewGrid();
+
+				auto inputDelayLabel = uiNewLabel("Input delay in milliseconds");
+				uiGridAppend(inputDelayGrid, uiControl(inputDelayLabel), 0, 0, 1, 1, 0, uiAlignStart, 0, uiAlignCenter);
+
+				inputDelay_ = uiNewEntry();
+				uiEntryOnChanged(inputDelay_, [](auto cb, auto modifyingCb) { *((int*)modifyingCb) = std::atoi(uiEntryText(cb)); }, &Config::get().inputDelay);
+				uiGridAppend(inputDelayGrid, uiControl(inputDelay_), 1, 0, 1, 1, 0, uiAlignStart, 0, uiAlignCenter);
+				uiEntrySetText(inputDelay_, std::to_string(Config::get().inputDelay).c_str());
+
+				uiBoxAppend(box, uiControl(inputDelayGrid), false);
+
 				auto openOrig = uiNewButton("Open original RSP configs");
 				uiButtonOnClicked(openOrig, [](auto button, auto data) { ((MainWindow*)data)->openOriginalRSPConfig(); }, this);
 				uiBoxAppend(box, uiControl(openOrig), false);
@@ -186,6 +198,7 @@ namespace UI
 #define CONFIG(name, desc) uiCheckbox* name##_;
 #include "xconfig.h"
 #undef CONFIG
+		uiEntry* inputDelay_;
 
 #define HOTKEY(row, view, name, cmd, desc) uiButton* name##_[MaxHotKeys];
 #include "xhotkeys.h"

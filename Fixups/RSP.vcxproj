@@ -139,7 +139,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>libyaml.lib;libui.lib;libui-common.lib;minizip-ng.lib;zlib-ng.lib;zlib-ng-ssse3.lib;zlib-ng-sse42.lib;zlib-ng-avx2.lib;zlib-ng-avx512.lib;zlib-ng-avx512vnni.lib;zlib-ng-pclmul.lib;zlib-ng-vpclmulqdq.lib;Shlwapi.lib;windowscodecs.lib;D2d1.lib;Dwrite.lib;Dbghelp.lib;Comctl32.lib;User32.lib;Winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libyaml.lib;libui.lib;libui-common.lib;minizip-ng.lib;zlib-ng.lib;zlib-ng-ssse3.lib;zlib-ng-sse42.lib;zlib-ng-avx2.lib;zlib-ng-avx512.lib;zlib-ng-avx512vnni.lib;zlib-ng-pclmul.lib;zlib-ng-vpclmulqdq.lib;Shlwapi.lib;windowscodecs.lib;D2d1.lib;Dwrite.lib;Dbghelp.lib;Comctl32.lib;User32.lib;Winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;UxTheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -163,7 +163,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>libyaml.lib;libui.lib;libui-common.lib;minizip-ng.lib;zlib-ng.lib;zlib-ng-ssse3.lib;zlib-ng-sse42.lib;zlib-ng-avx2.lib;zlib-ng-avx512.lib;zlib-ng-avx512vnni.lib;zlib-ng-pclmul.lib;zlib-ng-vpclmulqdq.lib;Shlwapi.lib;windowscodecs.lib;D2d1.lib;Dwrite.lib;Dbghelp.lib;Comctl32.lib;User32.lib;Winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libyaml.lib;libui.lib;libui-common.lib;minizip-ng.lib;zlib-ng.lib;zlib-ng-ssse3.lib;zlib-ng-sse42.lib;zlib-ng-avx2.lib;zlib-ng-avx512.lib;zlib-ng-avx512vnni.lib;zlib-ng-pclmul.lib;zlib-ng-vpclmulqdq.lib;Shlwapi.lib;windowscodecs.lib;D2d1.lib;Dwrite.lib;Dbghelp.lib;Comctl32.lib;User32.lib;Winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;UxTheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseExternal|Win32'">
@@ -261,6 +261,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="hooks.cpp" />
     <ClCompile Include="hotkey.cpp" />
+    <ClCompile Include="input_delayer.cpp" />
     <ClCompile Include="memunz.cpp" />
     <ClCompile Include="minidump.cpp" />
     <ClCompile Include="minizip.cpp" />
@@ -272,10 +273,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="backtrace.h" />
+    <ClInclude Include="circular_buffer.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="hooks.h" />
     <ClInclude Include="hooks_priv.h" />
     <ClInclude Include="hotkey.h" />
+    <ClInclude Include="input_delayer.h" />
     <ClInclude Include="memunz.h" />
     <ClInclude Include="minidump.h" />
     <ClInclude Include="minizip.h" />
