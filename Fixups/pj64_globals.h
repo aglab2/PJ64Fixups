@@ -171,5 +171,28 @@ namespace PJ64
 		{
 			return *(GetKeys*)(0x4D7FA4);
 		}
+
+		typedef void(__cdecl* ControllerCommand)(int Control, BYTE* Command);
+		[[maybe_unused]] static inline ControllerCommand ControllerControllerCommand()
+		{
+			return *(ControllerCommand*)(0x4D8180);
+		}
+
+		typedef void(__cdecl* ReadController)(int Control, BYTE* Command);
+		[[maybe_unused]] static inline ReadController ControllerReadController()
+		{
+			return *(ReadController*)(0x4D8190);
+		}
+
+		typedef struct {
+			BOOL Present;
+			BOOL RawData;
+			int  Plugin;
+		} CONTROL;
+
+		[[maybe_unused]] static inline CONTROL* Controls()
+		{
+			return (CONTROL*)0x004D14A4;
+		}
 	}
 }

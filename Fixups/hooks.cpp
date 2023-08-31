@@ -545,15 +545,59 @@ void HookManager::init()
 
     if (Config::get().inputDelay)
     {
-        UnprotectedMemoryScope scope{ (void*)0x42C7CE, 0x42C7DF - 0x42C7CE };
-        uint8_t* reg = (uint8_t*)0x42C7CE;
-        reg[0] = 0x8d;
-        reg[1] = 0x54;
-        reg[2] = 0x24;
-        reg[3] = 0x04;
-        reg[4] = 0x52;
-        reg[5] = 0x51;
-        writeCall(0x42C7CE + 6, 0x42C7DF - 0x42C7CE - 6, (void*)&HookManager::hookGetKeys);
+        {
+            // patch ReadControllerCommand to invoke out GetKeys
+            UnprotectedMemoryScope scope{ (void*)0x42C7CE, 0x42C7DF - 0x42C7CE };
+            uint8_t* reg = (uint8_t*)0x42C7CE;
+            reg[0] = 0x8d;
+            reg[1] = 0x54;
+            reg[2] = 0x24;
+            reg[3] = 0x04;
+            reg[4] = 0x52;
+            reg[5] = 0x51;
+            writeCall(0x42C7CE + 6, 0x42C7DF - 0x42C7CE - 6, (void*)&HookManager::hookGetKeys);
+        }
+        {
+            // PifRamRead ReadController
+            UnprotectedMemoryScope scope{ (uint8_t*)0x0042C329, 2 };
+            fillNop((uint8_t*)0x0042C329, 2);
+        }
+        {
+            // PifRamRead ReadController
+            UnprotectedMemoryScope scope{ (uint8_t*)0x0042C7B5, 6 };
+            fillNop((uint8_t*)0x0042C7B5, 6);
+        }
+        {
+            // PifRamWrite ControllerCommand
+            UnprotectedMemoryScope scope{ (void*)0x0042C4DF, 2 };
+            fillNop((uint8_t*)0x0042C4DF, 2);
+        }
+        {
+            // PifRamWrite ControllerCommand
+            UnprotectedMemoryScope scope{ (void*)0x0042C741, 2 };
+            fillNop((uint8_t*)0x0042C741, 2);
+        }
+        {
+            // ProcessControllerCommand ControllerCommand
+            UnprotectedMemoryScope scope{ (void*)0x0042C741, 2 };
+            fillNop((uint8_t*)0x0042C741, 2);
+        }
+        {
+            // ProcessControllerCommand RumbleCommand
+            UnprotectedMemoryScope scope{ (void*)0x0042C757, 2 };
+            fillNop((uint8_t*)0x0042C757, 2);
+        }
+
+        {
+            // zap jump checking for raw data to always use ReadControllerCommand
+            UnprotectedMemoryScope scope{ (void*)0x42C28E, 1 };
+            *(uint8_t*)0x42C28E = 0xEB;
+        }
+        {
+            // zap jump checking for raw data to always use ProcessControllerCommand
+            UnprotectedMemoryScope scope{ (void*)0x42C452, 1 };
+            *(uint8_t*)0x42C452 = 0xEB;
+        }
 
         // 0042C7CE A1 A4 7F 4D 00       mov         eax, dword ptr ds : [004D7FA4h]
         // 0042C7D3 85 C0                test        eax, eax
@@ -675,6 +719,67 @@ void HookManager::hookCloseCpuRomClosed()
     INVOKE_PJ64_PLUGIN_CALLBACK(RSPRomClosed)
 }
 
+// #define DEBUG_CONTROLLER_COMMANDS_DUMP
+
+#ifdef DEBUG_CONTROLLER_COMMANDS_DUMP
+#include <fstream>
+
+PJ64::Globals::ControllerCommand sRealControllerCommand = nullptr;
+PJ64::Globals::ReadController sRealReadController = nullptr;
+
+static std::ofstream& logOut()
+{
+    static std::ofstream stream{ "D:\\log.txt", std::ios::trunc};
+    return stream;
+}
+
+void __cdecl dump_ControllerCommand(int Control, BYTE* Command)
+{
+    logOut() << "ControllerCommand(" << Control;
+    if (Command)
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            logOut() << ", " << (unsigned)Command[i];
+        }
+    }
+    else
+    {
+        logOut() << ", null";
+    }
+
+    logOut() << ")" << std::endl;
+    sRealControllerCommand(Control, Command);
+}
+
+void __cdecl dump_ReadController(int Control, BYTE* Command)
+{
+    logOut() << "ReadController(" << Control;
+    if (Command)
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            logOut() << ", " << (unsigned) Command[i];
+        }
+        logOut() << ")";
+    }
+    else
+    {
+        logOut() << ", null";
+    }
+    sRealReadController(Control, Command);
+    if (Command)
+    {
+        logOut() << " -> ";
+        for (int i = 0; i < 10; i++)
+        {
+            logOut()<< (unsigned)Command[i] << ",";
+        }
+    }
+    logOut() << std::endl;
+}
+#endif
+
 void HookManager::hookStartRecompiledCpuRomOpen()
 {
     if (!gIsInitialized)
@@ -685,6 +790,16 @@ void HookManager::hookStartRecompiledCpuRomOpen()
         if (Config::get().inputDelay)
             gInputDelayer.start();
     }
+
+#ifdef DEBUG_CONTROLLER_COMMANDS_DUMP
+    if (0 == sRealControllerCommand && 0 == sRealReadController)
+    {
+        sRealControllerCommand = *(PJ64::Globals::ControllerCommand*)0x4D8180;
+        *(PJ64::Globals::ControllerCommand*)0x4D8180 = dump_ControllerCommand;
+        sRealReadController = *(PJ64::Globals::ReadController*)0x4D8190;
+        *(PJ64::Globals::ReadController*)0x4D8190 = dump_ReadController;
+    }
+#endif
 }
 
 void HookManager::hookAiDacrateChanged(int systemType)

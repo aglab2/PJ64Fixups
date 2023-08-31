@@ -288,6 +288,186 @@ PifRamWrite
 
 
 
+
+ProcessControllerCommand (?)
+0042C5C0 56                   push        esi  
+0042C5C1 33 C0                xor         eax,eax  
+0042C5C3 8B F2                mov         esi,edx  
+0042C5C5 8A 46 02             mov         al,byte ptr [esi+2]  
+0042C5C8 57                   push        edi  
+0042C5C9 83 F8 02             cmp         eax,2  
+0042C5CC 0F 8F B5 00 00 00    jg          0042C687  
+0042C5D2 74 27                je          0042C5FB  
+0042C5D4 8B D0                mov         edx,eax  
+0042C5D6 83 EA 00             sub         edx,0  
+0042C5D9 0F 84 D3 00 00 00    je          0042C6B2  
+0042C5DF 4A                   dec         edx  
+0042C5E0 0F 85 AD 00 00 00    jne         0042C693  
+0042C5E6 8D 04 49             lea         eax,[ecx+ecx*2]  
+0042C5E9 8B 0C 85 A0 14 4D 00 mov         ecx,dword ptr [eax*4+4D14A0h]  
+0042C5F0 85 C9                test        ecx,ecx  
+0042C5F2 75 04                jne         0042C5F8  
+0042C5F4 80 4E 01 80          or          byte ptr [esi+1],80h  
+0042C5F8 5F                   pop         edi  
+0042C5F9 5E                   pop         esi  
+0042C5FA C3                   ret  
+0042C5FB 8D 04 49             lea         eax,[ecx+ecx*2]  
+0042C5FE C1 E0 02             shl         eax,2  
+0042C601 83 B8 A0 14 4D 00 01 cmp         dword ptr [eax+4D14A0h],1  
+0042C608 75 EA                jne         0042C5F4  
+0042C60A 8B 80 A8 14 4D 00    mov         eax,dword ptr [eax+4D14A8h]  
+0042C610 33 D2                xor         edx,edx  
+0042C612 83 E8 02             sub         eax,2  
+0042C615 8A 76 03             mov         dh,byte ptr [esi+3]  
+0042C618 8A 56 04             mov         dl,byte ptr [esi+4]  
+0042C61B 74 5E                je          0042C67B  
+0042C61D 48                   dec         eax  
+0042C61E 74 1B                je          0042C63B  
+0042C620 83 E8 02             sub         eax,2  
+0042C623 0F 84 09 01 00 00    je          0042C732  
+0042C629 33 C0                xor         eax,eax  
+0042C62B 8D 7E 05             lea         edi,[esi+5]  
+0042C62E B9 08 00 00 00       mov         ecx,8  
+0042C633 F3 AB                rep stos    dword ptr es:[edi]  
+0042C635 5F                   pop         edi  
+0042C636 88 46 25             mov         byte ptr [esi+25h],al  
+0042C639 5E                   pop         esi  
+0042C63A C3                   ret  
+0042C63B 81 FA 00 80 00 00    cmp         edx,8000h  
+0042C641 72 0F                jb          0042C652  
+0042C643 81 FA 00 90 00 00    cmp         edx,9000h  
+0042C649 73 07                jae         0042C652  
+0042C64B B8 80 00 00 00       mov         eax,80h  
+0042C650 EB 02                jmp         0042C654  
+0042C652 33 C0                xor         eax,eax  
+0042C654 8A D0                mov         dl,al  
+0042C656 8A F2                mov         dh,dl  
+0042C658 55                   push        ebp  
+0042C659 8D 6E 05             lea         ebp,[esi+5]  
+0042C65C B9 08 00 00 00       mov         ecx,8  
+0042C661 8B FD                mov         edi,ebp  
+0042C663 8B C2                mov         eax,edx  
+0042C665 C1 E0 10             shl         eax,10h  
+0042C668 66 8B C2             mov         ax,dx  
+0042C66B F3 AB                rep stos    dword ptr es:[edi]  
+0042C66D 8B CD                mov         ecx,ebp  
+0042C66F E8 AC 0F FF FF       call        0041D620  
+0042C674 5D                   pop         ebp  
+0042C675 5F                   pop         edi  
+0042C676 88 46 25             mov         byte ptr [esi+25h],al  
+0042C679 5E                   pop         esi  
+0042C67A C3                   ret  
+0042C67B 83 C6 05             add         esi,5  
+0042C67E 56                   push        esi  
+0042C67F E8 DC 0F FF FF       call        0041D660  
+0042C684 5F                   pop         edi  
+0042C685 5E                   pop         esi  
+0042C686 C3                   ret  
+0042C687 83 F8 03             cmp         eax,3  
+0042C68A 74 78                je          0042C704  
+0042C68C 3D FF 00 00 00       cmp         eax,0FFh  
+0042C691 74 1F                je          0042C6B2  
+0042C693 8B 0D 80 7F 4D 00    mov         ecx,dword ptr ds:[4D7F80h]  
+0042C699 85 C9                test        ecx,ecx  
+0042C69B 0F 84 57 FF FF FF    je          0042C5F8  
+0042C6A1 50                   push        eax  
+0042C6A2 68 00 CE 46 00       push        46CE00h  
+0042C6A7 E8 C4 EF FD FF       call        0040B670  
+0042C6AC 83 C4 08             add         esp,8  
+0042C6AF 5F                   pop         edi  
+0042C6B0 5E                   pop         esi  
+0042C6B1 C3                   ret  
+0042C6B2 8A 56 01             mov         dl,byte ptr [esi+1]  
+0042C6B5 F6 C2 80             test        dl,80h  
+0042C6B8 0F 85 3A FF FF FF    jne         0042C5F8  
+0042C6BE 8D 04 49             lea         eax,[ecx+ecx*2]  
+0042C6C1 C1 E0 02             shl         eax,2  
+0042C6C4 8B B8 A0 14 4D 00    mov         edi,dword ptr [eax+4D14A0h]  
+0042C6CA B9 01 00 00 00       mov         ecx,1  
+0042C6CF 3B F9                cmp         edi,ecx  
+0042C6D1 75 28                jne         0042C6FB  
+0042C6D3 C6 46 03 05          mov         byte ptr [esi+3],5  
+0042C6D7 C6 46 04 00          mov         byte ptr [esi+4],0  
+0042C6DB 8B 80 A8 14 4D 00    mov         eax,dword ptr [eax+4D14A8h]  
+0042C6E1 83 E8 02             sub         eax,2  
+0042C6E4 74 0F                je          0042C6F5  
+0042C6E6 48                   dec         eax  
+0042C6E7 74 0C                je          0042C6F5  
+0042C6E9 83 E8 02             sub         eax,2  
+0042C6EC 74 07                je          0042C6F5  
+0042C6EE 5F                   pop         edi  
+0042C6EF C6 46 05 00          mov         byte ptr [esi+5],0  
+0042C6F3 5E                   pop         esi  
+0042C6F4 C3                   ret  
+0042C6F5 5F                   pop         edi  
+0042C6F6 88 4E 05             mov         byte ptr [esi+5],cl  
+0042C6F9 5E                   pop         esi  
+0042C6FA C3                   ret  
+0042C6FB 80 CA 80             or          dl,80h  
+0042C6FE 5F                   pop         edi  
+0042C6FF 88 56 01             mov         byte ptr [esi+1],dl  
+0042C702 5E                   pop         esi  
+0042C703 C3                   ret  
+0042C704 8D 04 49             lea         eax,[ecx+ecx*2]  
+0042C707 C1 E0 02             shl         eax,2  
+0042C70A 83 B8 A0 14 4D 00 01 cmp         dword ptr [eax+4D14A0h],1  
+0042C711 0F 85 DD FE FF FF    jne         0042C5F4  
+0042C717 8B 80 A8 14 4D 00    mov         eax,dword ptr [eax+4D14A8h]  
+0042C71D 33 D2                xor         edx,edx  
+0042C71F 83 E8 02             sub         eax,2  
+0042C722 8A 76 03             mov         dh,byte ptr [esi+3]  
+0042C725 8A 56 04             mov         dl,byte ptr [esi+4]  
+0042C728 74 43                je          0042C76D  
+0042C72A 48                   dec         eax  
+0042C72B 74 1C                je          0042C749  
+0042C72D 83 E8 02             sub         eax,2  
+0042C730 75 2D                jne         0042C75F  
+0042C732 A1 80 81 4D 00       mov         eax,dword ptr ds:[004D8180h]  
+0042C737 85 C0                test        eax,eax  
+0042C739 0F 84 B9 FE FF FF    je          0042C5F8  
+0042C73F 56                   push        esi  
+0042C740 51                   push        ecx  
+0042C741 FF D0                call        eax  
+0042C743 83 C4 08             add         esp,8  
+0042C746 5F                   pop         edi  
+0042C747 5E                   pop         esi  
+0042C748 C3                   ret  
+0042C749 A1 40 7F 4D 00       mov         eax,dword ptr ds:[004D7F40h]  
+0042C74E 85 C0                test        eax,eax  
+0042C750 74 0D                je          0042C75F  
+0042C752 8B 56 05             mov         edx,dword ptr [esi+5]  
+0042C755 52                   push        edx  
+0042C756 51                   push        ecx  
+0042C757 FF D0                call        eax  
+0042C759 83 C4 08             add         esp,8  
+0042C75C 5F                   pop         edi  
+0042C75D 5E                   pop         esi  
+0042C75E C3                   ret  
+0042C75F 8D 4E 05             lea         ecx,[esi+5]  
+0042C762 E8 B9 0E FF FF       call        0041D620  
+0042C767 5F                   pop         edi  
+0042C768 88 46 25             mov         byte ptr [esi+25h],al  
+0042C76B 5E                   pop         esi  
+0042C76C C3                   ret  
+0042C76D 83 C6 05             add         esi,5  
+0042C770 56                   push        esi  
+0042C771 E8 CA 0F FF FF       call        0041D740  
+0042C776 5F                   pop         edi  
+0042C777 5E                   pop         esi  
+0042C778 C3                   ret  
+
+
+
+
+
+
+
+
+
+
+
+
+
 0042C7BE 5E                   pop         esi  
 0042C7BF 59                   pop         ecx  
 0042C7C0 C3                   ret  

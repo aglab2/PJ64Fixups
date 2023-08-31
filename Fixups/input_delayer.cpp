@@ -51,6 +51,38 @@ void InputDelayer::stop()
 void InputDelayer::work()
 {
 	std::unique_lock<std::mutex> lck(mutex_);
+
+	// I have no clue what this does or if it is needed but I am sure it is of critical importance
+	auto controls = PJ64::Globals::Controls();
+
+	if (controls->Present && controls->RawData)
+	{
+		if (auto fn = PJ64::Globals::ControllerControllerCommand())
+		{
+			BYTE cmd[] = { 1, 3, 0, 255, 255, 255, 255, 255 };
+			fn(0, cmd);
+			fn(-1, nullptr);
+		}
+		if (auto fn = PJ64::Globals::ControllerReadController())
+		{
+			BYTE cmd[] = { 1, 3, 0, 255, 255, 255, 255, 255 };
+			fn(0, cmd);
+			fn(-1, nullptr);
+		}
+		if (auto fn = PJ64::Globals::ControllerControllerCommand())
+		{
+			BYTE cmd[] = { 1, 4, 1, 255, 255, 255, 255, 255 };
+			fn(0, cmd);
+			fn(-1, nullptr);
+		}
+		if (auto fn = PJ64::Globals::ControllerReadController())
+		{
+			BYTE cmd[] = { 1, 4, 1, 255, 255, 255, 255, 255 };
+			fn(0, cmd);
+			fn(-1, nullptr);
+		}
+	}
+
 	while (running_)
 	{
 		auto res = cv_.wait_until(lck, expectedWakeUpTime_);
@@ -69,9 +101,24 @@ void InputDelayer::work()
 		}
 
 		auto now = Clock::now();
-		DWORD keys;
+		DWORD keys = 0;
 		// can technically unlock mutex for GetKeys but should not matter much
-		PJ64::Globals::ControllerGetKeysFn()(0, &keys);
+
+		if (controls->Present && controls->RawData)
+		{
+			if (auto fn = PJ64::Globals::ControllerReadController())
+			{
+				BYTE pifRam[] = { 1, 4, 1, 0, 0, 255, 0, 255 };
+				fn(0, pifRam);
+				fn(-1, nullptr);
+				keys = *(DWORD*)&pifRam[3];
+			}
+		}
+		else
+		{
+			if (auto fn = PJ64::Globals::ControllerGetKeysFn()) fn(0, &keys);
+		}
+
 		sampledInputs_.push({ now, keys });
 
 		if (expectedWakeUpTime_ < now + std::chrono::milliseconds(MINIMAL_ERROR_MS))
