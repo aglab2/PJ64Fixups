@@ -436,7 +436,7 @@ void HookManager::init()
         doWriteCall((uintptr_t) (ptr + 5), sz - 5, (void*)&HookManager::WinMain_RunLoopHook);
     }
 
-    if (Config::get().fixRecompilerUnhandledOpCodeCrashes)
+    if (Config::get().fixRecompilerUnhandledOpCodeCrashes || Config::get().decompSlowReset)
     {
         writeCall(0x004304ae, 5, (void*)&HookManager::hookR4300i_LW_VAddr);
         writeCall(0x00431516, 5, (void*)&HookManager::hookR4300i_LW_VAddr);
@@ -648,6 +648,8 @@ static inline BOOL r4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
     return TRUE;
 }
 
+// this is an incredible hack and it only works for only so many applications...
+static const DWORD sBusyLoopPrologue[] = { 0x3C02A440, 0xA7380000, 0x8C830000, 0x34420010, 0x3C0CA440, 0x8C680008, 0x8D090004, 0xAC69000C, 0x8C4A0000, 0x2D41000B };
 
 BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
 {
@@ -656,22 +658,56 @@ BOOL __fastcall HookManager::hookR4300i_LW_VAddr(DWORD VAddr, DWORD* Value)
     if (!ok)
         return FALSE;
 
-    if (opcode.op == R4300i_SPECIAL)
+    if (Config::get().fixRecompilerUnhandledOpCodeCrashes)
     {
-        if (R4300i_SPECIAL_TGE <= opcode.funct && opcode.funct <= R4300i_SPECIAL_TNE)
+        if (opcode.op == R4300i_SPECIAL)
         {
-            opcode.Hex = 0;
+            if (R4300i_SPECIAL_TGE <= opcode.funct && opcode.funct <= R4300i_SPECIAL_TNE)
+            {
+                opcode.Hex = 0;
+            }
+            if (R4300i_SPECIAL_BREAK == opcode.funct)
+            {
+                opcode.Hex = 0;
+            }
         }
-        if (R4300i_SPECIAL_BREAK == opcode.funct)
+        if (opcode.op == R4300i_REGIMM)
         {
-            opcode.Hex = 0;
+            if (R4300i_REGIMM_TGEI <= opcode.rt && opcode.rt <= R4300i_REGIMM_TNEI)
+            {
+                opcode.Hex = 0;
+            }
         }
     }
-    if (opcode.op == R4300i_REGIMM)
+
+    if (Config::get().decompSlowReset)
     {
-        if (R4300i_REGIMM_TGEI <= opcode.rt && opcode.rt <= R4300i_REGIMM_TNEI)
+        if (opcode.Hex == 0x14200005)
         {
-            opcode.Hex = 0;
+            if ((VAddr & 0xFF000000) == 0x80000000)
+            {
+                constexpr int sCheckSize = sizeof(sBusyLoopPrologue) / sizeof(*sBusyLoopPrologue);
+                int i;
+                for (i = 0; i < sCheckSize; i++)
+                {
+                    DWORD ivaddr = VAddr - (sCheckSize - i) * 4;
+                    DWORD val;
+                    if (!r4300i_LW_VAddr(ivaddr, &val))
+                    {
+                        break;
+                    }
+
+                    if (val != sBusyLoopPrologue[i])
+                    {
+                        break;
+                    }
+                }
+
+                if (i == sCheckSize)
+                {
+                    opcode.Hex = 0x10000005;
+                }
+            }
         }
     }
 

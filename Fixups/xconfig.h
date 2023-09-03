@@ -1,6 +1,7 @@
 CONFIG(fastStates, "Do not reinitialize emu on state load")
 CONFIG(fastResets, "Do not reinitialize emu on soft reset")
 CONFIG(fixSlowResets, "Fix slow resets")
+CONFIG(decompSlowReset, "Fix decomp hacks busy loop slow reset")
 CONFIG(noLoadSlowdown, "Remove sleeps on ROM open")
 CONFIG(cf1ByDefault, "CF1 by default")
 CONFIG(useFastDecompression, "Use fast ZIP decompression")
