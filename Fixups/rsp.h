@@ -23,4 +23,5 @@ namespace RSP
 #undef FN
 
 	void load();
+	void reload();
 }

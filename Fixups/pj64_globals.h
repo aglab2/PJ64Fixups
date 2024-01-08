@@ -194,5 +194,20 @@ namespace PJ64
 		{
 			return (CONTROL*)0x004D14A4;
 		}
+
+		[[maybe_unused]] static inline HINSTANCE GfxDll()
+		{
+			return *(HINSTANCE*)0x4D1184;
+		}
+
+		[[maybe_unused]] static inline HINSTANCE AudioDll()
+		{
+			return *(HINSTANCE*)0x4D1490;
+		}
+
+		[[maybe_unused]] static inline HINSTANCE ControllerDll()
+		{
+			return *(HINSTANCE*)0x4D1108;
+		}
 	}
 }

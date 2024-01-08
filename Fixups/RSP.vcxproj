@@ -299,6 +299,8 @@
     <ClInclude Include="xvirtkey.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Bin\LLERSP.dat" />
+    <None Include="..\Bin\RSP.dat" />
     <None Include="RSP.dat" />
   </ItemGroup>
   <ItemGroup>

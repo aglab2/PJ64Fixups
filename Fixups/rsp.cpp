@@ -17,37 +17,69 @@
 extern HINSTANCE hInstance;
 namespace RSP
 {
+	enum class RSPType
+	{
+		HLE,
+		LLE,
+	};
+
 	HMODULE gLib = nullptr;
+	static RSPType sRSPType = RSPType::HLE;
+	static bool sOk = false;
+	constexpr int sRSPTypesCount = 2;
 
 #define FN(x) x##Fn g##x = nullptr;
 #include "xmacro.h"
 #undef FN
 
-	static const char* getRSPPath()
+	static const char* toRSPName(RSPType type)
 	{
-		static char path[MAX_PATH]{ 0 };
+		switch (type)
+		{
+		case RSPType::HLE:
+			return "RSP.dat";
+		case RSPType::LLE:
+			return "LLERSP.dat";
+		}
+	}
+
+	static const char* getRSPPath(RSPType type)
+	{
+		static char paths[sRSPTypesCount][MAX_PATH]{ };
+		char* path = paths[(int) type];
 		if ('\0' == *path)
 		{
 			SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, path);
 			PathAppend(path, "PJ64Fixups");
 			CreateDirectory(path, nullptr);
-			PathAppend(path, "RSP.dat");
+			PathAppend(path, toRSPName(type));
 		}
 		return path;
 	}
 
-	static const char* unpack()
+	static auto getResource(RSPType type)
 	{
-		auto path = getRSPPath();
+		switch (type)
+		{
+		case RSP::RSPType::HLE:
+			return MAKEINTRESOURCE(IDR_RSP);
+		case RSP::RSPType::LLE:
+			return MAKEINTRESOURCE(IDR_LLERSP);
+		}
+	}
+
+	static const char* unpack(RSPType type)
+	{
+		auto path = getRSPPath(type);
 		int fd = _open(path, _O_BINARY | _O_WRONLY | _O_CREAT | _O_EXCL, 0777);
 		if (-1 != fd)
 		{
-			auto rc = FindResource(hInstance, MAKEINTRESOURCE(IDR_RSP), RT_RCDATA);
+			auto rc = FindResource(hInstance, getResource(type), RT_RCDATA);
 			auto res = LoadResource(hInstance, rc);
             uint8_t *dataComp = (uint8_t*)LockResource(res);
 			size_t sizeComp = SizeofResource(hInstance, rc);
-            uint8_t *data   = (uint8_t*) malloc(0x20000);
-            size_t dataLen  = 0x20000;
+			size_t dataLen = 1024 * 1024;
+            uint8_t *data   = (uint8_t*) malloc(dataLen);
             zng_uncompress(data, &dataLen, dataComp, sizeComp);
             _write(fd, data, dataLen);
 			_close(fd);
@@ -110,6 +142,18 @@ namespace RSP
 		return TRUE;
 	}
 
+	static void loadDll(RSPType type)
+	{
+		if (gLib)
+			FreeLibrary(gLib);
+
+		gLib = LoadLibrary(RSP::unpack(type));
+		sRSPType = type;
+#define FN(x) g##x = (x##Fn)GetProcAddress(gLib, #x);
+#include "xmacro.h"
+#undef FN
+	}
+
 	void load()
 	{
 		char path[MAX_PATH];
@@ -124,11 +168,8 @@ namespace RSP
 			return;
 		}
 
-		// Load original RSP
-		gLib = LoadLibrary(RSP::unpack());
-#define FN(x) g##x = (x##Fn)GetProcAddress(gLib, #x);
-#include "xmacro.h"
-#undef FN
+		// Load original HLE RSP
+		loadDll(RSPType::HLE);
 
 		bool ok = plantHooks();
 		if (ok)
@@ -142,6 +183,41 @@ namespace RSP
 		{
 			setupExceptionFilters();
 			zapRSPInit();
+			sOk = true;
 		}
+	}
+
+	void reload()
+	{
+		if (!sOk)
+			return;
+
+		auto dll = PJ64::Globals::GfxDll();
+		if (!dll)
+			return;
+
+		auto getPluginInfo = (void(__cdecl*)(PLUGIN_INFO*))GetProcAddress(dll, "GetDllInfo");
+		if (!getPluginInfo)
+			return;
+
+		PLUGIN_INFO info;
+		getPluginInfo(&info);
+		RSPType wantType;
+		if (strstr(info.Name, "parallel"))
+		{
+			wantType = RSPType::LLE;
+		}
+		else
+		{
+			wantType = RSPType::HLE;
+		}
+
+		if (wantType != sRSPType)
+		{
+			loadDll(wantType);
+			setupRSP();
+		}
+
+		return;
 	}
 }

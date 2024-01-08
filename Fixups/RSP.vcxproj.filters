@@ -137,6 +137,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="RSP.dat" />
+    <None Include="..\Bin\LLERSP.dat" />
+    <None Include="..\Bin\RSP.dat" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc">

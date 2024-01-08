@@ -41,7 +41,7 @@ EXPORT void CALL DllAbout(HWND hParent) { LOAD_RSP(); RSP::gDllAbout(hParent); }
 EXPORT void CALL DllConfig(HWND hParent) { LOAD_RSP(); UI::show(hParent); /* gDllConfig(hParent); */ }
 EXPORT void CALL DllTest(HWND hParent) { LOAD_RSP(); RSP::gDllTest(hParent); }
 EXPORT DWORD CALL DoRspCycles(DWORD Cycles) { LOAD_RSP(); return RSP::gDoRspCycles(Cycles); }
-EXPORT void CALL GetDllInfo(PLUGIN_INFO* PluginInfo) { LOAD_RSP(); RSP::gGetDllInfo(PluginInfo); }
+EXPORT void CALL GetDllInfo(PLUGIN_INFO* PluginInfo) { LOAD_RSP(); RSP::reload(); RSP::gGetDllInfo(PluginInfo); }
 EXPORT void CALL GetRspDebugInfo(RSPDEBUG_INFO* RSPDebugInfo) { LOAD_RSP(); RSP::gGetRspDebugInfo(RSPDebugInfo); }
 EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, DWORD* CycleCount) { LOAD_RSP(); RSP::gInitiateRSP(Rsp_Info, CycleCount); }
 EXPORT void CALL InitiateRSPDebugger(DEBUG_INFO DebugInfo) { LOAD_RSP(); RSP::gInitiateRSPDebugger(DebugInfo); }
