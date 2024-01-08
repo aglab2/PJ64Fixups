@@ -187,6 +187,14 @@ namespace RSP
 		}
 	}
 
+#define fisupper(a) (((unsigned)(a)-'A') < 26)
+
+	static int ftolower(int c)
+	{
+		if (fisupper(c)) return c | 32;
+		return c;
+	}
+
 	void reload()
 	{
 		if (!sOk)
@@ -202,6 +210,11 @@ namespace RSP
 
 		PLUGIN_INFO info;
 		getPluginInfo(&info);
+		for (auto& ch : info.Name)
+		{
+			ch = ftolower(ch);
+		}
+
 		RSPType wantType;
 		if (strstr(info.Name, "parallel"))
 		{
