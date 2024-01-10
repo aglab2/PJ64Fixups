@@ -745,8 +745,8 @@ void HookManager::hookCloseCpuRomClosed()
     {
         gIsInitialized = false;
         INVOKE_PJ64_PLUGIN_CALLBACK(GfxRomClosed)
-        INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
         gInputDelayer.stop(); // nop is no input delay is needed
+        INVOKE_PJ64_PLUGIN_CALLBACK(ContRomClosed)
     }
     {
         std::lock_guard<std::mutex> lck(gAudioMutex);
