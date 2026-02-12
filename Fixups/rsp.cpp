@@ -75,7 +75,7 @@ namespace RSP
 		if (PJ64::Globals::RSPCloseDLL() == NULL) { return FALSE; }
 		PJ64::Globals::GetRspDebugInfo() = (void*)NULL;
 		PJ64::Globals::InitiateRSPDebugger() = (void*)NULL;
-		PJ64::Globals::RSPDllConfig() = (void*)Parallel::DllConfig;
+		PJ64::Globals::RSPDllConfig() = (void*)DllConfig;
 		return TRUE;
 	}
 
