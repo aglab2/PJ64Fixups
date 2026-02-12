@@ -62,9 +62,6 @@
     <ClInclude Include="Rsp #1.1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xmacro.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="pj64_globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -134,11 +131,9 @@
     <ClInclude Include="circular_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="RSP.dat" />
-    <None Include="..\Bin\LLERSP.dat" />
-    <None Include="..\Bin\RSP.dat" />
+    <ClInclude Include="parallel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc">

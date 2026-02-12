@@ -230,9 +230,7 @@ namespace UI
 		}
 
 		void openOriginalRSPConfig()
-		{
-			RSP::gDllConfig(uiWindowGetHWND(window_));
-		}
+		{ }
 
 		void openButtonConfig(uiButton* button)
 		{
