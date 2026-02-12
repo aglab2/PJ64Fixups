@@ -1,3 +1,5 @@
+Development is moved to https://github.com/Luna-Project64/Luna-Project64
+
 # PJ64Fixups
 Fixups that patch the following PJ64 1.6 issues:
 
